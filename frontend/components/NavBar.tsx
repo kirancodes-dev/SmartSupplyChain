@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Globe2, BarChart3, Ship, Sparkles, Activity, ShieldCheck, Home, Settings, FileText, Anchor, Zap, ChevronDown, Map, Calculator } from "lucide-react";
+import { Globe2, BarChart3, Ship, Sparkles, Activity, ShieldCheck, Home, Settings, FileText, Anchor, Zap, ChevronDown, Map, Calculator, Trophy, Leaf, Bot, Radio } from "lucide-react";
 import PushNotifications from "./PushNotifications";
 import GlobalSearch from "./GlobalSearch";
 import KeyboardShortcuts from "./KeyboardShortcuts";
@@ -19,9 +19,13 @@ const NAV_MORE = [
   { href: "/scenarios",    label: "Scenarios",    icon: Zap },
   { href: "/ports",        label: "Ports",        icon: Anchor },
   { href: "/calculator",   label: "Calculator",   icon: Calculator },
+  { href: "/leaderboard",  label: "Leaderboard",  icon: Trophy },
+  { href: "/esg",          label: "ESG",          icon: Leaf },
+  { href: "/briefing",     label: "AI Briefing",  icon: Bot },
   { href: "/architecture", label: "Architecture", icon: Globe2 },
   { href: "/audit",        label: "Audit",        icon: ShieldCheck },
   { href: "/report",       label: "Report",       icon: FileText },
+  { href: "/status",       label: "Status",       icon: Radio },
   { href: "/settings",     label: "Settings",     icon: Settings },
 ];
 

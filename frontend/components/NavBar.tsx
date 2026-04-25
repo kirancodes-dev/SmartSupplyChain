@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Globe2, BarChart3, Ship, Sparkles, Activity, ShieldCheck } from "lucide-react";
+import { Globe2, BarChart3, Ship, Sparkles, Activity, ShieldCheck, Home } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/",             label: "Dashboard",    icon: Activity },
+  { href: "/home",         label: "Home",         icon: Home },
+  { href: "/dashboard",    label: "Dashboard",    icon: Activity },
   { href: "/fleet",        label: "Fleet",        icon: Ship },
   { href: "/analytics",    label: "Analytics",    icon: BarChart3 },
   { href: "/architecture", label: "Architecture", icon: Globe2 },

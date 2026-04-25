@@ -294,14 +294,14 @@ export default function FleetPage() {
                 <div className="hidden md:flex flex-col items-center gap-2 shrink-0">
                   <div className="p-3 bg-white rounded-xl">
                     <QRCodeSVG
-                      value={`SHIP:${selected.id}|${selected.name}|${selected.cargo}|LAT:${selected.lat?.toFixed(3)}|LNG:${selected.lng?.toFixed(3)}|STATUS:${selected.status}`}
+                      value={`http://localhost:3000/track/${selected.id}`}
                       size={90}
                       bgColor="#ffffff"
                       fgColor="#060818"
                       level="M"
                     />
                   </div>
-                  <p className="text-[10px] text-gray-600 text-center">Scan to track</p>
+                  <p className="text-[10px] text-gray-600 text-center">Scan to track live</p>
                   <p className="text-[9px] text-gray-700 font-mono">{selected.id}</p>
                 </div>
               </div>

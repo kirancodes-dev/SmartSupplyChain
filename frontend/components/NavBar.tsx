@@ -4,9 +4,10 @@ import { usePathname } from "next/navigation";
 import { Globe2, BarChart3, Ship, Sparkles, Activity } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/",          label: "Dashboard",  icon: Activity },
-  { href: "/fleet",     label: "Fleet",      icon: Ship },
-  { href: "/analytics", label: "Analytics",  icon: BarChart3 },
+  { href: "/",             label: "Dashboard",    icon: Activity },
+  { href: "/fleet",        label: "Fleet",        icon: Ship },
+  { href: "/analytics",    label: "Analytics",    icon: BarChart3 },
+  { href: "/architecture", label: "Architecture", icon: Globe2 },
 ];
 
 export default function NavBar({ metrics }: { metrics?: any }) {

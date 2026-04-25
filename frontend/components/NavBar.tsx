@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Globe2, BarChart3, Ship, Sparkles, Activity, ShieldCheck, Home } from "lucide-react";
+import { Globe2, BarChart3, Ship, Sparkles, Activity, ShieldCheck, Home, Settings, FileText } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/home",         label: "Home",         icon: Home },
@@ -10,6 +10,8 @@ const NAV_ITEMS = [
   { href: "/analytics",    label: "Analytics",    icon: BarChart3 },
   { href: "/architecture", label: "Architecture", icon: Globe2 },
   { href: "/audit",        label: "Audit",        icon: ShieldCheck },
+  { href: "/report",       label: "Report",       icon: FileText },
+  { href: "/settings",     label: "Settings",     icon: Settings },
 ];
 
 export default function NavBar({ metrics, extraRight }: { metrics?: any; extraRight?: React.ReactNode }) {

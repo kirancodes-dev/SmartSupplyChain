@@ -1,49 +1,50 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000/ws";
 
-export async function fetchState() {
-  const res = await fetch(`${API_URL}/state`, { cache: 'no-store' });
-  if (!res.ok) throw new Error("Failed to fetch state");
+export { WS_URL };
+
+export async function apiFetch(path: string, opts?: RequestInit) {
+  const res = await fetch(`${API_URL}${path}`, { cache: "no-store", ...opts });
+  if (!res.ok) throw new Error(`API error ${res.status}: ${path}`);
   return res.json();
 }
 
-export async function fetchAlerts() {
-  const res = await fetch(`${API_URL}/alerts`, { cache: 'no-store' });
-  if (!res.ok) throw new Error("Failed to fetch alerts");
-  return res.json();
-}
+export const fetchState = () => apiFetch("/state");
+export const fetchAlerts = () => apiFetch("/alerts");
+export const fetchFleet = () => apiFetch("/fleet");
+export const fetchPorts = () => apiFetch("/ports");
+export const fetchMetrics = () => apiFetch("/metrics");
+export const fetchHistory = () => apiFetch("/history");
+export const fetchOptimizationLog = () => apiFetch("/optimization-log");
 
 export async function requestOptimization(shipId: string) {
-  const res = await fetch(`${API_URL}/optimize`, {
+  return apiFetch("/optimize", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ship_id: shipId }),
   });
-  if (!res.ok) throw new Error("Optimization request failed");
-  return res.json();
 }
 
 export async function toggleAutopilot() {
-  const res = await fetch(`${API_URL}/toggle-autopilot`, { method: "POST" });
-  if (!res.ok) throw new Error("Toggle request failed");
-  return res.json();
+  return apiFetch("/toggle-autopilot", { method: "POST" });
 }
 
 export async function chatWithAI(query: string) {
-  const res = await fetch(`${API_URL}/chat`, {
+  return apiFetch("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query }),
   });
-  if (!res.ok) throw new Error("Chat request failed");
-  return res.json();
+}
+
+export async function fetchExecutiveSummary() {
+  return apiFetch("/executive-summary", { method: "POST" });
 }
 
 export async function analyzeVision(base64Image: string) {
-  const res = await fetch(`${API_URL}/analyze-vision`, {
+  return apiFetch("/analyze-vision", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ image_base64: base64Image }),
   });
-  if (!res.ok) throw new Error("Vision request failed");
-  return res.json();
 }

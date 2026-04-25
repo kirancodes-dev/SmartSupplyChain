@@ -3,6 +3,8 @@ import { useEffect, useState, useMemo } from "react";
 import { fetchFleet, requestOptimization, fetchMetrics } from "@/lib/api";
 import NavBar from "@/components/NavBar";
 import ChatWidget from "@/components/ChatWidget";
+import { QRCodeSVG } from "qrcode.react";
+import { ArrowRight } from "lucide-react";
 import { Ship, ChevronUp, ChevronDown, Search, Filter, Zap, Check, AlertTriangle, CheckCircle, Clock, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -244,22 +246,57 @@ export default function FleetPage() {
                 </div>
                 <button onClick={() => setSelected(null)} className="text-gray-600 hover:text-white text-xl">×</button>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                {[
-                  { label: "Cargo Type", value: selected.cargo },
-                  { label: "Cargo Value", value: `$${((selected.cargo_value_usd||0)/1e6).toFixed(1)}M` },
-                  { label: "Speed", value: `${selected.speed_knots} knots` },
-                  { label: "Vessel Type", value: selected.vessel_type },
-                  { label: "Origin", value: selected.origin },
-                  { label: "Destination", value: selected.destination },
-                  { label: "Position", value: `${selected.lat?.toFixed(2)}°, ${selected.lng?.toFixed(2)}°` },
-                  { label: "Risk Score", value: `${selected.risk_score || 0}/100` },
-                ].map(item => (
-                  <div key={item.label} className="glass-bright p-3 rounded-xl">
-                    <p className="text-gray-600 uppercase tracking-wider text-[10px]">{item.label}</p>
-                    <p className="text-white font-bold mt-1">{item.value}</p>
+
+              {/* Lifecycle stages */}
+              {(() => {
+                const STAGES = ["Order Placed", "In Transit", "Port Arrival", "Customs", "Delivered"];
+                const activeIdx = selected.status === "rerouted" ? 2 : selected.status === "at-risk" ? 1 : selected.status === "delayed" ? 1 : 2;
+                return (
+                  <div className="mb-4 flex items-center gap-1 flex-wrap">
+                    {STAGES.map((s, i) => (
+                      <div key={s} className="flex items-center gap-1">
+                        <div className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border ${i < activeIdx ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : i === activeIdx ? "border-blue-500/40 bg-blue-500/15 text-blue-300" : "border-white/8 bg-white/4 text-gray-600"}`}>{s}</div>
+                        {i < STAGES.length - 1 && <ArrowRight size={10} className="text-gray-700 shrink-0" />}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                );
+              })()}
+
+              <div className="flex gap-4">
+                {/* Details */}
+                <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                  {[
+                    { label: "Cargo Type", value: selected.cargo },
+                    { label: "Cargo Value", value: `$${((selected.cargo_value_usd||0)/1e6).toFixed(1)}M` },
+                    { label: "Speed", value: `${selected.speed_knots} knots` },
+                    { label: "Vessel Type", value: selected.vessel_type },
+                    { label: "Origin", value: selected.origin },
+                    { label: "Destination", value: selected.destination },
+                    { label: "Position", value: `${selected.lat?.toFixed(2)}°, ${selected.lng?.toFixed(2)}°` },
+                    { label: "Risk Score", value: `${selected.risk_score || 0}/100` },
+                  ].map(item => (
+                    <div key={item.label} className="glass-bright p-3 rounded-xl">
+                      <p className="text-gray-600 uppercase tracking-wider text-[10px]">{item.label}</p>
+                      <p className="text-white font-bold mt-1">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* QR Code */}
+                <div className="hidden md:flex flex-col items-center gap-2 shrink-0">
+                  <div className="p-3 bg-white rounded-xl">
+                    <QRCodeSVG
+                      value={`SHIP:${selected.id}|${selected.name}|${selected.cargo}|LAT:${selected.lat?.toFixed(3)}|LNG:${selected.lng?.toFixed(3)}|STATUS:${selected.status}`}
+                      size={90}
+                      bgColor="#ffffff"
+                      fgColor="#060818"
+                      level="M"
+                    />
+                  </div>
+                  <p className="text-[10px] text-gray-600 text-center">Scan to track</p>
+                  <p className="text-[9px] text-gray-700 font-mono">{selected.id}</p>
+                </div>
               </div>
             </motion.div>
           )}

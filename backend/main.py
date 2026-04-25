@@ -9,6 +9,7 @@ from typing import List, Set
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from models import OptimizeRequest, ChatRequest, VisionRequest, WeatherInjectRequest
 from ai_engine import (
@@ -394,8 +395,6 @@ Make them realistic, specific, and dramatic. Include real port names and shippin
 
 class WhatIfRequest(BaseModel):
     scenario: str
-
-from pydantic import BaseModel
 
 @app.post("/api/what-if")
 async def what_if_analysis(req: WhatIfRequest):

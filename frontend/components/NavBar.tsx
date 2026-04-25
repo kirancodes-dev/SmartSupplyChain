@@ -35,6 +35,7 @@ export default function NavBar({ metrics, extraRight }: { metrics?: any; extraRi
   const [tourOpen, setTourOpen] = useState(false);
 
   return (
+    <>
     <header className="sticky top-0 z-40 border-b border-white/8" style={{ background: "rgba(6,8,24,0.92)", backdropFilter: "blur(20px)" }}>
       <div className="max-w-[1800px] mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
         {/* Brand */}
@@ -108,5 +109,6 @@ export default function NavBar({ metrics, extraRight }: { metrics?: any; extraRi
       </div>
     </header>
     {tourOpen && <GuidedTour onClose={() => setTourOpen(false)} />}
+    </>
   );
 }

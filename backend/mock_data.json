@@ -1,0 +1,19 @@
+{
+  "ships": [
+    {"id": "SH-001", "name": "Oceanic Pioneer", "origin": "Shanghai", "destination": "Los Angeles", "lat": 34.5, "lng": -150.2, "status": "on-time", "eta": "2026-05-01", "cargo": "Electronics"},
+    {"id": "SH-002", "name": "Global Trader", "origin": "Rotterdam", "destination": "New York", "lat": 45.2, "lng": -40.1, "status": "on-time", "eta": "2026-04-28", "cargo": "Automotive Parts"},
+    {"id": "SH-003", "name": "Pacific Voyager", "origin": "Singapore", "destination": "Seattle", "lat": 20.1, "lng": 140.5, "status": "at-risk", "eta": "2026-05-10", "cargo": "Textiles"},
+    {"id": "SH-004", "name": "Atlantic Breeze", "origin": "London", "destination": "Miami", "lat": 28.5, "lng": -65.4, "status": "delayed", "eta": "2026-04-30", "cargo": "Machinery"}
+  ],
+  "ports": [
+    {"id": "P-LAX", "name": "Port of Los Angeles", "lat": 33.72, "lng": -118.26, "capacity": 100, "current_load": 95, "status": "Congested"},
+    {"id": "P-SHA", "name": "Port of Shanghai", "lat": 30.62, "lng": 122.06, "capacity": 150, "current_load": 80, "status": "Clear"},
+    {"id": "P-ROT", "name": "Port of Rotterdam", "lat": 51.94, "lng": 4.14, "capacity": 120, "current_load": 60, "status": "Clear"},
+    {"id": "P-NYC", "name": "Port of New York", "lat": 40.67, "lng": -74.04, "capacity": 90, "current_load": 85, "status": "Moderate"},
+    {"id": "P-SIN", "name": "Port of Singapore", "lat": 1.27, "lng": 103.8, "capacity": 140, "current_load": 110, "status": "Moderate"}
+  ],
+  "weather": [
+    {"id": "W-001", "type": "Typhoon", "name": "Typhoon X", "lat": 22.5, "lng": 135.2, "radius_km": 500, "severity": "High"},
+    {"id": "W-002", "type": "Heavy Fog", "name": "North Atlantic Fog", "lat": 46.0, "lng": -38.0, "radius_km": 200, "severity": "Medium"}
+  ]
+}

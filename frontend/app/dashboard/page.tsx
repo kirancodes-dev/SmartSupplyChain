@@ -15,6 +15,8 @@ import OnboardingModal from "@/components/OnboardingModal";
 import CommandPalette from "@/components/CommandPalette";
 import WeatherControl from "@/components/WeatherControl";
 import ForecastPanel from "@/components/ForecastPanel";
+import MultiAgentPanel from "@/components/MultiAgentPanel";
+import VoiceCommand from "@/components/VoiceCommand";
 import { Power, Wifi, WifiOff, Globe, Map } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -139,7 +141,7 @@ export default function DashboardPage() {
         <KPIStats state={state} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          <div className="lg:col-span-2"><GlobeMap state={state} /></div>
+          <div className="lg:col-span-2"><GlobeMap state={state} onWeatherAdded={loadMetrics} /></div>
           <div className="lg:col-span-1"><AlertsPanel alerts={state?.alerts || []} onOptimized={loadMetrics} /></div>
         </div>
 
@@ -151,6 +153,12 @@ export default function DashboardPage() {
         </div>
 
         <ForecastPanel />
+
+        {/* Multi-Agent + Voice side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <MultiAgentPanel />
+          <VoiceCommand />
+        </div>
 
         {state?.ports && <PortsTable ports={state.ports} />}
 

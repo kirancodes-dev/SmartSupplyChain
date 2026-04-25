@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { fetchOptimizationLog } from "@/lib/api";
 import NavBar from "@/components/NavBar";
 import ChatWidget from "@/components/ChatWidget";
+import IncidentReplay from "@/components/IncidentReplay";
 import { ShieldCheck, Clock, CheckCircle, ArrowRight, RefreshCw, Leaf, User, Bot } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -37,6 +38,9 @@ export default function AuditPage() {
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> Tamper-Evident Log
           </div>
         </div>
+
+        {/* Incident Replay */}
+        <IncidentReplay />
 
         {/* Lifecycle Stage Explainer */}
         <div className="glass-panel rounded-2xl p-5">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ClientShell from "@/components/ClientShell";
 
 export const metadata: Metadata = {
   title: "Smart Supply Chain AI | Industrial Command Center",
@@ -27,7 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
-      <body className="min-h-full flex flex-col bg-[#060818]">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#060818]">
+        <ClientShell>{children}</ClientShell>
+      </body>
     </html>
   );
 }
+
+

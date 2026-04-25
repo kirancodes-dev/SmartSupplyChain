@@ -17,6 +17,8 @@ import WeatherControl from "@/components/WeatherControl";
 import ForecastPanel from "@/components/ForecastPanel";
 import MultiAgentPanel from "@/components/MultiAgentPanel";
 import VoiceCommand from "@/components/VoiceCommand";
+import CommodityPrices from "@/components/CommodityPrices";
+import { RolePicker, useRoleFilter, type Role } from "@/components/RoleView";
 import { Power, Wifi, WifiOff, Globe, Map } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -26,6 +28,7 @@ export default function DashboardPage() {
   const [wsConnected, setWsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [viewMode, setViewMode] = useState<"globe" | "map">("globe");
+  const [role, setRole] = useState<Role>("full");
   const wsRef = useRef<WebSocket | null>(null);
   const prevShipStatuses = useRef<Record<string, string>>({});
 
@@ -90,6 +93,8 @@ export default function DashboardPage() {
   };
 
   const isAutoPilot = state?.agent_auto_pilot || false;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const roleFilter = useRoleFilter(role, state, metrics);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -122,6 +127,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <RolePicker onRoleChange={setRole} />
             <div className="flex items-center rounded-xl border border-white/10 overflow-hidden bg-white/5">
               <button onClick={() => setViewMode("globe")} className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold transition-all ${viewMode==="globe" ? "bg-blue-500/20 text-blue-300" : "text-gray-500 hover:text-gray-300"}`}>
                 <Globe size={13}/> 3D Globe
@@ -137,6 +143,16 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
+
+        {/* Role banner */}
+        {roleFilter.summary && (
+          <div className="px-4 py-2.5 rounded-xl text-xs font-semibold text-white" style={{ background: roleFilter.highlightColor + "20", border: `1px solid ${roleFilter.highlightColor}30` }}>
+            {roleFilter.summary}
+          </div>
+        )}
+
+        {/* Commodity Prices */}
+        <CommodityPrices />
 
         <KPIStats state={state} />
 

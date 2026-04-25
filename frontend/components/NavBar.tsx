@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { href: "/architecture", label: "Architecture", icon: Globe2 },
 ];
 
-export default function NavBar({ metrics }: { metrics?: any }) {
+export default function NavBar({ metrics, extraRight }: { metrics?: any; extraRight?: React.ReactNode }) {
   const path = usePathname();
 
   return (
@@ -66,6 +66,7 @@ export default function NavBar({ metrics }: { metrics?: any }) {
               Auto-Pilot ON
             </div>
           )}
+          {extraRight}
         </div>
       </div>
     </header>

@@ -1,0 +1,8 @@
+{
+  "python.defaultInterpreterPath": "./venv/bin/python3",
+  "python.analysis.extraPaths": [
+    "./venv/lib/python3.9/site-packages"
+  ],
+  "pyrefly.pythonInterpreter": "./venv/bin/python3",
+  "python.terminal.activateEnvironment": true
+}

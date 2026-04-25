@@ -19,6 +19,7 @@ import MultiAgentPanel from "@/components/MultiAgentPanel";
 import VoiceCommand from "@/components/VoiceCommand";
 import CommodityPrices from "@/components/CommodityPrices";
 import { RolePicker, useRoleFilter, type Role } from "@/components/RoleView";
+import FleetHealthGauge from "@/components/FleetHealthGauge";
 import { Power, Wifi, WifiOff, Globe, Map } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -154,7 +155,11 @@ export default function DashboardPage() {
         {/* Commodity Prices */}
         <CommodityPrices />
 
-        <KPIStats state={state} />
+        {/* KPIs + Fleet Health Gauge side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
+          <div className="lg:col-span-3"><KPIStats state={state} /></div>
+          <div className="lg:col-span-1"><FleetHealthGauge state={state} metrics={metrics} /></div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2"><GlobeMap state={state} onWeatherAdded={loadMetrics} /></div>

@@ -3,9 +3,10 @@ import { useEffect, useState, useMemo } from "react";
 import { fetchFleet, requestOptimization, fetchMetrics } from "@/lib/api";
 import NavBar from "@/components/NavBar";
 import ChatWidget from "@/components/ChatWidget";
+import EmailDrafter from "@/components/EmailDrafter";
 import { exportFleetCSV } from "@/lib/export";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight, Download, Mail } from "lucide-react";
 import { Ship, ChevronUp, ChevronDown, Search, Filter, Zap, Check, AlertTriangle, CheckCircle, Clock, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -41,6 +42,7 @@ export default function FleetPage() {
   const [filter, setFilter] = useState<FilterStatus>("all");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<any>(null);
+  const [emailShip, setEmailShip] = useState<any>(null);
   const [optimizing, setOptimizing] = useState<string | null>(null);
   const [optimized, setOptimized] = useState<Set<string>>(new Set());
 
@@ -251,7 +253,15 @@ export default function FleetPage() {
                   <h3 className="text-lg font-black text-white">{selected.name}</h3>
                   <p className="text-gray-500 text-sm">{selected.company} · Flag: {selected.flag}</p>
                 </div>
-                <button onClick={() => setSelected(null)} className="text-gray-600 hover:text-white text-xl">×</button>
+                <div className="flex items-center gap-2">
+                  {(selected.status === "at-risk" || selected.status === "delayed" || selected.status === "rerouted") && (
+                    <button onClick={() => setEmailShip(selected)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-blue-500/30 bg-blue-500/10 text-blue-300 hover:bg-blue-500/20 transition-all">
+                      <Mail size={12}/> Draft Email
+                    </button>
+                  )}
+                  <button onClick={() => setSelected(null)} className="text-gray-600 hover:text-white text-xl">×</button>
+                </div>
               </div>
 
               {/* Lifecycle stages */}
@@ -311,6 +321,9 @@ export default function FleetPage() {
 
       </main>
       <ChatWidget />
+      <AnimatePresence>
+        {emailShip && <EmailDrafter ship={emailShip} onClose={() => setEmailShip(null)} />}
+      </AnimatePresence>
     </div>
   );
 }

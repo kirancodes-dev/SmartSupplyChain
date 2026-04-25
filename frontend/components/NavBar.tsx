@@ -1,8 +1,11 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Globe2, BarChart3, Ship, Sparkles, Activity, ShieldCheck, Home, Settings, FileText, Anchor, Zap, ChevronDown } from "lucide-react";
+import { Globe2, BarChart3, Ship, Sparkles, Activity, ShieldCheck, Home, Settings, FileText, Anchor, Zap, ChevronDown, Map } from "lucide-react";
 import PushNotifications from "./PushNotifications";
+import GlobalSearch from "./GlobalSearch";
+import KeyboardShortcuts from "./KeyboardShortcuts";
+import GuidedTour from "./GuidedTour";
 import { useState } from "react";
 
 const NAV_PRIMARY = [
@@ -24,6 +27,7 @@ const NAV_MORE = [
 export default function NavBar({ metrics, extraRight }: { metrics?: any; extraRight?: React.ReactNode }) {
   const path = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/8" style={{ background: "rgba(6,8,24,0.92)", backdropFilter: "blur(20px)" }}>
@@ -86,10 +90,18 @@ export default function NavBar({ metrics, extraRight }: { metrics?: any; extraRi
           {metrics?.agent_auto_pilot && (
             <div className="badge badge-emerald text-[10px]"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Auto-Pilot ON</div>
           )}
+          <GlobalSearch />
+          <KeyboardShortcuts />
+          <button onClick={() => setTourOpen(true)}
+            title="Start guided tour"
+            className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-[10px] font-bold text-gray-500 hover:text-white hover:bg-white/10 transition-all">
+            🧭 Tour
+          </button>
           <PushNotifications alertCount={metrics?.at_risk_count} />
           {extraRight}
         </div>
       </div>
     </header>
+    {tourOpen && <GuidedTour onClose={() => setTourOpen(false)} />}
   );
 }

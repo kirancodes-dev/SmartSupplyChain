@@ -20,6 +20,9 @@ import VoiceCommand from "@/components/VoiceCommand";
 import CommodityPrices from "@/components/CommodityPrices";
 import { RolePicker, useRoleFilter, type Role } from "@/components/RoleView";
 import FleetHealthGauge from "@/components/FleetHealthGauge";
+import NewsWidget from "@/components/NewsWidget";
+import WhatIfPanel from "@/components/WhatIfPanel";
+import FleetSuccessConfetti from "@/components/FleetSuccessConfetti";
 import { Power, Wifi, WifiOff, Globe, Map } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -99,6 +102,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <FleetSuccessConfetti state={state} />
       <ToastProvider />
       <OnboardingModal />
       <NavBar metrics={metrics} extraRight={<CommandPalette onAutoPilot={handleToggleAutoPilot} />} />
@@ -179,6 +183,12 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <MultiAgentPanel />
           <VoiceCommand />
+        </div>
+
+        {/* News Feed + What-If side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <NewsWidget />
+          <WhatIfPanel />
         </div>
 
         {state?.ports && <PortsTable ports={state.ports} />}

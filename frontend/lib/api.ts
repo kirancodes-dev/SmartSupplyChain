@@ -48,3 +48,22 @@ export async function analyzeVision(base64Image: string) {
     body: JSON.stringify({ image_base64: base64Image }),
   });
 }
+
+export const fetchNews = () => apiFetch("/news");
+
+export async function whatIfAnalysis(scenario: string) {
+  return apiFetch("/what-if", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ scenario }),
+  });
+}
+
+export async function costEstimate(data: { origin: string; destination: string; cargo_type: string; weight_tons: number; urgency: string }) {
+  return apiFetch("/cost-estimate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+}
+

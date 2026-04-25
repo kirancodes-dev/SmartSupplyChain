@@ -89,3 +89,12 @@ class SystemMetrics(BaseModel):
     total_alerts_resolved: int
     agent_auto_pilot: bool
     uptime_seconds: float
+
+class WeatherInjectRequest(BaseModel):
+    type: str = "Typhoon"
+    name: str = "Custom Storm"
+    lat: float
+    lng: float
+    radius_km: float = 400.0
+    severity: str = "High"
+    wind_speed_knots: float = 120.0

@@ -262,3 +262,42 @@ def analyze_visual_anomaly(image_base64: str) -> dict:
         "related_entity": None, "actionable": False,
         "timestamp": datetime.utcnow().isoformat()
     }
+
+# ─── Predictive Forecast ──────────────────────────────────────────────────────
+def generate_forecast(state: dict) -> list:
+    """Generates a 24-hour predictive forecast for the fleet using Gemini."""
+    if HAS_GEMINI and client:
+        try:
+            at_risk = [s for s in state.get("ships", []) if s.get("status") in ("at-risk", "delayed")]
+            congested = [p for p in state.get("ports", []) if p.get("status") == "Congested"]
+            weather = state.get("weather", [])
+            prompt = f"""You are a maritime AI forecasting system. Based on current fleet state, generate a 24-hour predictive forecast.
+
+Current state:
+- {len(state.get('ships',[]))} vessels tracked, {len(at_risk)} at-risk/delayed
+- Active weather events: {[w['name'] for w in weather]}
+- Congested ports: {[p['name'] for p in congested]}
+- Auto-pilot: {"ACTIVE" if state.get('agent_auto_pilot') else "INACTIVE"}
+
+Return ONLY a JSON array of exactly 4 forecast items:
+[
+  {{"hour": "Next 6h", "risk_level": "<Low|Medium|High>", "headline": "<short headline>", "detail": "<1 sentence>", "metric": "<key number or stat>"}},
+  {{"hour": "6–12h", "risk_level": "...", "headline": "...", "detail": "...", "metric": "..."}},
+  {{"hour": "12–18h", "risk_level": "...", "headline": "...", "detail": "...", "metric": "..."}},
+  {{"hour": "18–24h", "risk_level": "...", "headline": "...", "detail": "...", "metric": "..."}}
+]"""
+            result = _call_gemini(prompt)
+            return json.loads(result.replace("```json", "").replace("```", "").strip())
+        except Exception as e:
+            print(f"[AI] Forecast error: {e}")
+
+    # Fallback mock forecast
+    ships = state.get("ships", [])
+    at_risk_count = sum(1 for s in ships if s.get("status") in ("at-risk","delayed"))
+    return [
+        {"hour": "Next 6h",  "risk_level": "High"   if at_risk_count > 3 else "Medium", "headline": f"{at_risk_count} vessels need attention", "detail": "Weather proximity elevating risk scores across Pacific routes.", "metric": f"{at_risk_count} at-risk vessels"},
+        {"hour": "6–12h",   "risk_level": "Medium", "headline": "Port congestion expected to peak", "detail": "Shanghai and Singapore ports forecast to reach 90%+ capacity.", "metric": "90% peak utilization"},
+        {"hour": "12–18h",  "risk_level": "Low",    "headline": "AI rerouting clears backlog", "detail": "Auto-pilot expected to resolve 80% of current disruptions autonomously.", "metric": "~$2.1M protected"},
+        {"hour": "18–24h",  "risk_level": "Low",    "headline": "Fleet normalizing", "detail": "All rerouted vessels estimated to reach alternate ports. CO₂ savings accumulating.", "metric": f"+{random.randint(200,600)}t CO₂ saved"},
+    ]
+

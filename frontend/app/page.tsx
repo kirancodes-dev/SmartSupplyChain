@@ -13,6 +13,8 @@ import AlertTicker from "@/components/AlertTicker";
 import ToastProvider, { showToast } from "@/components/ToastProvider";
 import OnboardingModal from "@/components/OnboardingModal";
 import CommandPalette from "@/components/CommandPalette";
+import WeatherControl from "@/components/WeatherControl";
+import ForecastPanel from "@/components/ForecastPanel";
 import { Power, Wifi, WifiOff, Globe, Map } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -145,8 +147,12 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <DemoMode onRefresh={loadMetrics} />
-          {state?.ports && <PortsTable ports={state.ports} />}
+          <WeatherControl onWeatherChange={loadMetrics} />
         </div>
+
+        <ForecastPanel />
+
+        {state?.ports && <PortsTable ports={state.ports} />}
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[

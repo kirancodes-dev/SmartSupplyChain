@@ -3,8 +3,9 @@ import { useEffect, useState, useMemo } from "react";
 import { fetchFleet, requestOptimization, fetchMetrics } from "@/lib/api";
 import NavBar from "@/components/NavBar";
 import ChatWidget from "@/components/ChatWidget";
+import { exportFleetCSV } from "@/lib/export";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import { Ship, ChevronUp, ChevronDown, Search, Filter, Zap, Check, AlertTriangle, CheckCircle, Clock, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -110,7 +111,7 @@ export default function FleetPage() {
             <p className="text-gray-500 text-sm mt-0.5">{ships.length} vessels tracked globally</p>
           </div>
           {/* Summary badges */}
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap items-center">
             {Object.entries(STATUS_CONFIG).map(([key, cfg]) => {
               const count = ships.filter(s => s.status === key).length;
               return (
@@ -120,6 +121,12 @@ export default function FleetPage() {
                 </button>
               );
             })}
+            <button
+              onClick={() => exportFleetCSV(ships)}
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition-all ml-2"
+            >
+              <Download size={12} /> Export CSV
+            </button>
           </div>
         </div>
 

@@ -10,7 +10,7 @@ from typing import List, Set
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
-from models import OptimizeRequest, ChatRequest, VisionRequest
+from models import OptimizeRequest, ChatRequest, VisionRequest, WeatherInjectRequest
 from ai_engine import (
     analyze_disruptions, optimize_route,
     chat_with_supply_chain, analyze_visual_anomaly,
@@ -286,6 +286,59 @@ async def api_analyze_vision(req: VisionRequest):
         state["alerts"].insert(0, alert)
     return {"status": "success", "alert": alert}
 
+# ─── Weather Control (Live Demo) ──────────────────────────────────────────────
+@app.post("/api/weather/add")
+async def add_weather_event(req: WeatherInjectRequest):
+    event_id = f"weather-custom-{random.randint(10000, 99999)}"
+    event = {
+        "id": event_id,
+        "type": req.type,
+        "name": req.name,
+        "lat": req.lat,
+        "lng": req.lng,
+        "radius_km": req.radius_km,
+        "severity": req.severity,
+        "wind_speed_knots": req.wind_speed_knots,
+    }
+    state["weather"].append(event)
+    # Trigger immediate alert
+    alert_id = f"alert-wx-{event_id}"
+    state["alerts"].insert(0, {
+        "id": alert_id,
+        "type": f"Weather Injection: {req.type}",
+        "severity": req.severity,
+        "message": f"⚡ LIVE DEMO: {req.name} injected at ({req.lat:.1f}°, {req.lng:.1f}°). Radius {req.radius_km:.0f}km. Wind: {req.wind_speed_knots:.0f} knots. AI analyzing nearby vessels...",
+        "related_entity": None,
+        "actionable": False,
+        "timestamp": datetime.utcnow().isoformat(),
+    })
+    log.info(f"Weather event injected: {req.name} at ({req.lat}, {req.lng})")
+    if manager.active:
+        await manager.broadcast(state)
+    return {"status": "success", "id": event_id}
+
+@app.delete("/api/weather/{event_id}")
+async def remove_weather_event(event_id: str):
+    before = len(state["weather"])
+    state["weather"] = [w for w in state["weather"] if w["id"] != event_id]
+    if len(state["weather"]) == before:
+        raise HTTPException(status_code=404, detail="Weather event not found")
+    log.info(f"Weather event removed: {event_id}")
+    if manager.active:
+        await manager.broadcast(state)
+    return {"status": "removed", "id": event_id}
+
+@app.get("/api/weather")
+def get_weather_events():
+    return {"events": state["weather"], "total": len(state["weather"])}
+
+# ─── AI Predictive Forecast ───────────────────────────────────────────────────
+@app.post("/api/forecast")
+async def api_forecast():
+    from ai_engine import generate_forecast
+    forecast = await asyncio.to_thread(generate_forecast, state)
+    return {"forecast": forecast}
+
 @app.get("/api/health")
 def health_check():
     return {
@@ -294,5 +347,6 @@ def health_check():
         "uptime_seconds": round(time.time() - START_TIME, 1),
         "websocket_clients": len(manager.active),
         "ships_tracked": len(state["ships"]),
-        "ports_monitored": len(state["ports"])
+        "ports_monitored": len(state["ports"]),
+        "weather_events": len(state["weather"]),
     }

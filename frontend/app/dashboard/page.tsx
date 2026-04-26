@@ -23,6 +23,8 @@ import FleetHealthGauge from "@/components/FleetHealthGauge";
 import NewsWidget from "@/components/NewsWidget";
 import WhatIfPanel from "@/components/WhatIfPanel";
 import FleetSuccessConfetti from "@/components/FleetSuccessConfetti";
+import { SkeletonKPI, SkeletonGlobe, SkeletonNews } from "@/components/Skeletons";
+import EmptyState from "@/components/EmptyState";
 import { Power, Wifi, WifiOff, Globe, Map } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -107,6 +109,19 @@ export default function DashboardPage() {
       <OnboardingModal />
       <NavBar metrics={metrics} extraRight={<CommandPalette onAutoPilot={handleToggleAutoPilot} />} />
       <AlertTicker state={state} />
+
+      {/* ── Skeleton loading while connecting ── */}
+      {!state && (
+        <main className="flex-1 max-w-[1800px] mx-auto w-full px-4 md:px-8 py-6 flex flex-col gap-5">
+          <div className="flex items-center gap-3 px-1">
+            <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+            <p className="text-xs text-gray-500 animate-pulse">Connecting to live fleet data...</p>
+          </div>
+          <SkeletonKPI />
+          <SkeletonGlobe />
+          <SkeletonNews />
+        </main>
+      )}
 
       <AnimatePresence>
         {isAutoPilot && (

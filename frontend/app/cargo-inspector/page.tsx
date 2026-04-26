@@ -84,7 +84,7 @@ export default function CargoInspectorPage() {
       <main className="flex-1 max-w-[1400px] mx-auto w-full px-4 md:px-8 py-8 flex flex-col gap-6">
         <div>
           <h1 className="text-3xl font-black text-white flex items-center gap-3"><Eye size={26} className="text-purple-400" /> Visual Cargo Inspector</h1>
-          <p className="text-gray-500 mt-1">Upload any cargo photo, shipping label, or manifest — Gemini 2.0 Vision extracts details, flags discrepancies, and estimates damage costs</p>
+          <p className="text-gray-500 mt-1">Upload any cargo photo, shipping label, or manifest — Gemini 3 Vision extracts details, flags discrepancies, and estimates damage costs</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -217,7 +217,7 @@ export default function CargoInspectorPage() {
                 <div className="glass-panel rounded-xl p-4">
                   <p className="text-[10px] text-gray-600 uppercase tracking-wider font-bold mb-1">AI Inspector Notes</p>
                   <p className="text-[11px] text-gray-400 leading-relaxed">{result.inspection_notes}</p>
-                  <p className="text-[9px] text-gray-700 mt-2">Model: {model} · Powered by Gemini 2.0 Vision</p>
+                  <p className="text-[9px] text-gray-700 mt-2">Model: {model} · Powered by Gemini 3 Vision</p>
                 </div>
               </motion.div>
             )}

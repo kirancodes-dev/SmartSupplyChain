@@ -224,7 +224,7 @@ export default function DashboardPage() {
         </div>
 
         <footer className="text-center text-[10px] text-gray-700 pb-2">
-          Smart Supply Chain AI v2.0 · Gemini 2.0 Flash · Google H2S Hackathon 2026 · Press <kbd className="font-mono bg-white/10 px-1 rounded">⌘K</kbd> for commands
+          Smart Supply Chain AI v2.0 · Gemini 3 Flash · Google H2S Hackathon 2026 · Press <kbd className="font-mono bg-white/10 px-1 rounded">⌘K</kbd> for commands
         </footer>
       </main>
       <ChatWidget />

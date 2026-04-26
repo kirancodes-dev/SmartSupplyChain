@@ -118,7 +118,7 @@ Write a complete professional email with Subject line, greeting, body explaining
               }} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold border border-blue-500/30 bg-blue-500/10 text-blue-300 hover:bg-blue-500/20 transition-all">
                 <Mail size={12}/> Open in Mail App
               </button>
-              <span className="ml-auto text-[10px] text-gray-600">Powered by Gemini 2.0 Flash</span>
+              <span className="ml-auto text-[10px] text-gray-600">Powered by Gemini 3 Flash</span>
             </div>
           )}
         </div>

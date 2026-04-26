@@ -1,7 +1,7 @@
 {
   "name": "Smart Supply Chain AI",
   "short_name": "SupplyChainAI",
-  "description": "Industrial-grade AI supply chain command center powered by Gemini 2.0 Flash",
+  "description": "Industrial-grade AI supply chain command center powered by Gemini 3 Flash",
   "start_url": "/home",
   "display": "standalone",
   "background_color": "#060818",

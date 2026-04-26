@@ -50,7 +50,7 @@ export default function ReportPage() {
             <span className="report-logo-icon">🌐</span>
             <div>
               <h1 className="report-company">Smart Supply Chain AI</h1>
-              <p className="report-tagline">Industrial AI Fleet Management · Powered by Gemini 2.0 Flash</p>
+              <p className="report-tagline">Industrial AI Fleet Management · Powered by Gemini 3 Flash</p>
             </div>
           </div>
           <div className="report-title-block">
@@ -169,7 +169,7 @@ export default function ReportPage() {
 
         {/* Footer */}
         <div className="report-footer">
-          <p>Smart Supply Chain AI v2.0 · Generated {now.toISOString()} · Powered by Gemini 2.0 Flash</p>
+          <p>Smart Supply Chain AI v2.0 · Generated {now.toISOString()} · Powered by Gemini 3 Flash</p>
           <p>Google H2S Hackathon 2026 · Built by Kiran Biradar · Confidential</p>
         </div>
       </div>

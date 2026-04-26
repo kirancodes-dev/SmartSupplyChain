@@ -55,7 +55,7 @@ export default function OnboardingModal() {
                 <Globe2 size={28} className="text-white" />
               </div>
               <h2 className="text-2xl font-black gradient-text mb-2">Smart Supply Chain AI</h2>
-              <p className="text-gray-400 text-sm">Industrial-grade AI for global logistics · Powered by Gemini 2.0</p>
+              <p className="text-gray-400 text-sm">Industrial-grade AI for global logistics · Powered by Gemini 3</p>
             </div>
 
             {/* Features grid */}

@@ -17,7 +17,7 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([{
     role: "ai",
-    text: "👋 I'm your **AI Supply Chain Assistant** powered by Gemini 2.0. Ask me anything about live fleet data, or click **Executive Summary** for a board-level briefing.",
+    text: "👋 I'm your **AI Supply Chain Assistant** powered by Gemini 3. Ask me anything about live fleet data, or click **Executive Summary** for a board-level briefing.",
     ts: now(),
   }]);
   const [input, setInput] = useState("");
@@ -95,7 +95,7 @@ export default function ChatWidget() {
               </div>
               <div className="flex-1">
                 <h3 className="text-sm font-bold text-white">Supply Chain AI</h3>
-                <p className="text-[11px] text-emerald-400 flex items-center gap-1"><Sparkles size={9}/> Gemini 2.0 Flash · Live Data</p>
+                <p className="text-[11px] text-emerald-400 flex items-center gap-1"><Sparkles size={9}/> Gemini 3 Flash · Live Data</p>
               </div>
               <button onClick={handleExecutiveSummary} disabled={summaryLoading}
                 className="flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1.5 rounded-lg border border-purple-500/30 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 transition-all disabled:opacity-50">

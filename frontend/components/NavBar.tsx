@@ -93,7 +93,7 @@ export default function NavBar({ metrics, extraRight }: { metrics?: any; extraRi
             </div>
           )}
           <div className="badge badge-blue text-[10px]"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" /> Live</div>
-          <div className="badge badge-purple text-[10px]"><Sparkles size={9} /> Gemini 2.0</div>
+          <div className="badge badge-purple text-[10px]"><Sparkles size={9} /> Gemini 3</div>
           {metrics?.agent_auto_pilot && (
             <div className="badge badge-emerald text-[10px]"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Auto-Pilot ON</div>
           )}

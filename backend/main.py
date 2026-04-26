@@ -21,6 +21,8 @@ from database import (
     init_db, save_history_tick, get_history,
     log_optimization, get_optimization_log, get_total_optimizations
 )
+from digital_twin import digital_twin
+from pubsub_stream import pubsub_client
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -47,16 +49,7 @@ app.add_middleware(
 START_TIME = time.time()
 
 # ─── State ────────────────────────────────────────────────────────────────────
-state = {
-    "ships": [],
-    "ports": [],
-    "weather": [],
-    "alerts": [],
-    "total_co2_saved_tons": 0,
-    "agent_auto_pilot": False,
-    "total_alerts_resolved": 0,
-    "tick": 0
-}
+state = digital_twin.state
 
 # ─── WebSocket Manager ────────────────────────────────────────────────────────
 class ConnectionManager:
@@ -86,12 +79,7 @@ manager = ConnectionManager()
 
 # ─── Data Loading ─────────────────────────────────────────────────────────────
 def load_initial_data():
-    with open("mock_data.json", "r") as f:
-        data = json.load(f)
-    state["ships"] = data.get("ships", [])
-    state["ports"] = data.get("ports", [])
-    state["weather"] = data.get("weather", [])
-    log.info(f"Loaded {len(state['ships'])} ships, {len(state['ports'])} ports, {len(state['weather'])} weather events")
+    log.info(f"Initialized Generative Digital Twin with {len(state['ships'])} ships, {len(state['ports'])} ports, {len(state['weather'])} weather events")
 
 # ─── Simulation Loop ──────────────────────────────────────────────────────────
 async def simulate_world():
@@ -162,8 +150,10 @@ async def simulate_world():
         if tick_count % 5 == 0:
             await asyncio.to_thread(save_history_tick, state)
 
-        # Broadcast to WebSocket clients
+        # Broadcast to WebSocket clients and Pub/Sub Stream
         if manager.active:
+            # Simulate real-time event streaming backbone
+            pubsub_client.publish("telemetry_update", state)
             await manager.broadcast(state)
 
 # ─── Startup ──────────────────────────────────────────────────────────────────
@@ -528,7 +518,7 @@ Output ONLY the JSON, no markdown."""
         import re
         api_key = os.getenv("GEMINI_API_KEY", "")
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-2.0-flash")
+        model = genai.GenerativeModel("gemini-3-flash")
         if image_b64:
             image_data = {"mime_type": "image/jpeg", "data": image_b64}
             response = model.generate_content([prompt, image_data])
@@ -536,7 +526,7 @@ Output ONLY the JSON, no markdown."""
             response = model.generate_content(prompt)
         j = re.search(r'\{.*\}', response.text, re.DOTALL)
         if j:
-            return {"result": json.loads(j.group()), "model": "gemini-2.0-flash", "timestamp": datetime.now().isoformat()}
+            return {"result": json.loads(j.group()), "model": "gemini-3-flash", "timestamp": datetime.now().isoformat()}
     except Exception as e:
         log.warning(f"Cargo inspect fallback: {e}")
 

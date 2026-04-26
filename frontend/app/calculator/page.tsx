@@ -45,7 +45,7 @@ export default function CalculatorPage() {
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 md:px-8 py-8 flex flex-col gap-6">
         <div>
           <h1 className="text-3xl font-black text-white flex items-center gap-3"><Calculator size={24} className="text-blue-400"/> Shipping Cost Calculator</h1>
-          <p className="text-gray-500 mt-1">AI-powered quote estimation using live market rates · Powered by Gemini 2.0</p>
+          <p className="text-gray-500 mt-1">AI-powered quote estimation using live market rates · Powered by Gemini 3</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -160,7 +160,7 @@ export default function CalculatorPage() {
                 <div className="glass-panel rounded-2xl p-8 flex flex-col items-center gap-3 text-center border border-dashed border-white/10">
                   <Calculator size={32} className="text-gray-700"/>
                   <p className="text-sm text-gray-600">Fill in the details and click "Get AI Quote"</p>
-                  <p className="text-xs text-gray-700">Powered by Gemini 2.0 Flash + live market data</p>
+                  <p className="text-xs text-gray-700">Powered by Gemini 3 Flash + live market data</p>
                 </div>
               )}
             </AnimatePresence>

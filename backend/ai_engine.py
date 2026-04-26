@@ -22,7 +22,7 @@ except ImportError:
     HAS_GEMINI = False
     client = None
 
-MODEL = "gemini-2.0-flash"
+MODEL = "gemini-3-flash"
 
 def _call_gemini(prompt: str) -> str:
     if not HAS_GEMINI or not client:

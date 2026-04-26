@@ -24,7 +24,7 @@ const LAYERS = [
     label: "Gemini AI Engine",
     color: "#a855f7",
     icon: Brain,
-    items: ["gemini-2.0-flash", "Function Calling", "Vision API (Satellite)", "Executive Summary"],
+    items: ["gemini-3-flash", "Function Calling", "Vision API (Satellite)", "Executive Summary"],
   },
   {
     id: "action",
@@ -43,7 +43,7 @@ export default function ArchitecturePage() {
 
         <div className="text-center">
           <h1 className="text-3xl font-black gradient-text mb-2">Multi-Agent AI Architecture</h1>
-          <p className="text-gray-500 text-sm">How Gemini 2.0 orchestrates 4 specialized agents to preemptively protect global supply chains</p>
+          <p className="text-gray-500 text-sm">How Gemini 3 orchestrates 4 specialized agents to preemptively protect global supply chains</p>
         </div>
 
         {/* Pipeline Diagram */}
@@ -133,7 +133,7 @@ export default function ArchitecturePage() {
           <h2 className="text-sm font-bold text-white mb-4">Full Technology Stack</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { category: "AI / ML", items: ["Gemini 2.0 Flash", "Function Calling", "Vision API", "Agentic Auto-Pilot"] },
+              { category: "AI / ML", items: ["Gemini 3 Flash", "Function Calling", "Vision API", "Agentic Auto-Pilot"] },
               { category: "Backend", items: ["FastAPI (Python)", "WebSocket", "SQLite + aiosqlite", "Pydantic v2"] },
               { category: "Frontend", items: ["Next.js 16 (App Router)", "react-globe.gl", "Chart.js", "Framer Motion"] },
               { category: "DevOps", items: ["Docker + Compose", "Google Cloud Run", "GitHub CI/CD", "Health Checks"] },

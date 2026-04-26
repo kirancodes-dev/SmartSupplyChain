@@ -95,7 +95,7 @@ export default function StatusPage() {
         {/* Overall status banner */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
           className={`rounded-2xl p-5 flex items-center gap-4 border ${cfg.bg}`}>
-          <OverallIcon size={28} style={{ color: cfg.color }} className={overallStatus === "checking" ? "animate-spin" : ""}/>
+          <OverallIcon size={28} style={{ color: cfg.color }} className={checking ? "animate-spin" : ""}/>
           <div className="flex-1">
             <p className="text-base font-black text-white">
               {allHealthy ? "All Systems Operational" : anyDown ? "Service Disruption Detected" : "Partial Service Degradation"}

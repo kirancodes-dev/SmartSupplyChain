@@ -45,7 +45,7 @@ function Toggle({ value, onChange, label, desc, color = "#10b981" }: { value: bo
       </div>
       <button onClick={() => onChange(!value)}
         className="relative w-11 h-6 rounded-full transition-all duration-300 shrink-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#060818]"
-        style={{ background: value ? color : "rgba(255,255,255,0.1)", focusRingColor: color }}>
+        style={{ background: value ? color : "rgba(255,255,255,0.1)" }}>
         <motion.div animate={{ x: value ? 20 : 2 }} transition={{ type: "spring", stiffness: 500, damping: 30 }}
           className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-md" />
       </button>

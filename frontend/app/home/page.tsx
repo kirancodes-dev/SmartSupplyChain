@@ -5,7 +5,7 @@ import {
   Globe2, Ship, Zap, Leaf, Bot, BarChart3, ShieldCheck, ArrowRight,
   Star, Play, TrendingUp, AlertTriangle, RefreshCw, CheckCircle,
   CloudLightning, Mic, Calculator, Trophy, FileText, Newspaper,
-  Lightbulb, Map, Activity, ChevronRight, Sparkles, Clock
+  Lightbulb, Map, Activity, ChevronRight, Sparkles, Clock, Camera, DollarSign
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -45,13 +45,13 @@ const ALL_PAGES = [
   { icon: Bot, label: "AI Briefing", href: "/briefing", desc: "Gemini daily executive brief", color: "#a855f7" },
   { icon: Trophy, label: "Leaderboard", href: "/leaderboard", desc: "Vessel performance rank", color: "#f59e0b" },
   { icon: Leaf, label: "ESG", href: "/esg", desc: "IMO 2030 sustainability", color: "#10b981" },
-  { icon: Newspaper, label: "News Feed", href: "/dashboard", desc: "AI maritime intelligence", color: "#0ea5e9" },
-  { icon: Lightbulb, label: "What-If", href: "/dashboard", desc: "Hypothetical AI analysis", color: "#6366f1" },
+  { icon: Camera, label: "Cargo Vision", href: "/cargo-inspector", desc: "Gemini visual inspection", color: "#ec4899" },
+  { icon: Lightbulb, label: "What-If Lab", href: "/whatif-lab", desc: "NL crisis simulation", color: "#6366f1" },
+  { icon: DollarSign, label: "Carbon Market", href: "/carbon-market", desc: "Trade CO₂ credit savings", color: "#10b981" },
+  { icon: ShieldCheck, label: "Blockchain Audit", href: "/audit", desc: "Cryptographic AI proof", color: "#84cc16" },
   { icon: Calculator, label: "Calculator", href: "/calculator", desc: "AI shipping cost quote", color: "#14b8a6" },
   { icon: FileText, label: "Report", href: "/report", desc: "Printable executive PDF", color: "#22c55e" },
-  { icon: ShieldCheck, label: "Audit", href: "/audit", desc: "Tamper-evident AI log", color: "#84cc16" },
   { icon: Activity, label: "Status", href: "/status", desc: "Live system health", color: "#10b981" },
-  { icon: Globe2, label: "Architecture", href: "/architecture", desc: "AI pipeline diagram", color: "#94a3b8" },
   { icon: Sparkles, label: "Settings", href: "/settings", desc: "Tune AI parameters", color: "#64748b" },
 ];
 

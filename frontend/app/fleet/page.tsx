@@ -6,9 +6,11 @@ import ChatWidget from "@/components/ChatWidget";
 import EmailDrafter from "@/components/EmailDrafter";
 import { exportFleetCSV } from "@/lib/export";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowRight, Download, Mail } from "lucide-react";
-import { Ship, ChevronUp, ChevronDown, Search, Filter, Zap, Check, AlertTriangle, CheckCircle, Clock, RefreshCw } from "lucide-react";
+import { ArrowRight, Download, Mail, LayoutGrid, LayoutList } from "lucide-react";
+import { Ship, ChevronUp, ChevronDown, Search, Filter, Zap, Check, AlertTriangle, CheckCircle, Clock, RefreshCw, MapPin, Package } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import EmptyState from "@/components/EmptyState";
+import InfoTooltip from "@/components/InfoTooltip";
 
 type SortKey = "name" | "status" | "risk_score" | "cargo_value_usd" | "eta" | "delay_hours";
 type FilterStatus = "all" | "at-risk" | "delayed" | "on-time" | "rerouted";
@@ -45,6 +47,7 @@ export default function FleetPage() {
   const [emailShip, setEmailShip] = useState<any>(null);
   const [optimizing, setOptimizing] = useState<string | null>(null);
   const [optimized, setOptimized] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<"table" | "cards">("table");
 
   const load = async () => {
     try {
@@ -125,10 +128,21 @@ export default function FleetPage() {
             })}
             <button
               onClick={() => exportFleetCSV(ships)}
-              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition-all ml-2"
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition-all"
             >
               <Download size={12} /> Export CSV
             </button>
+            {/* View toggle */}
+            <div className="flex rounded-xl border border-white/10 overflow-hidden">
+              <button onClick={() => setViewMode("table")}
+                className={`px-3 py-1.5 flex items-center gap-1.5 text-xs font-bold transition-all ${viewMode === "table" ? "bg-blue-500/20 text-blue-300" : "text-gray-500 hover:text-gray-300"}`}>
+                <LayoutList size={13} /> Table
+              </button>
+              <button onClick={() => setViewMode("cards")}
+                className={`px-3 py-1.5 flex items-center gap-1.5 text-xs font-bold transition-all ${viewMode === "cards" ? "bg-blue-500/20 text-blue-300" : "text-gray-500 hover:text-gray-300"}`}>
+                <LayoutGrid size={13} /> Cards
+              </button>
+            </div>
           </div>
         </div>
 
@@ -152,10 +166,75 @@ export default function FleetPage() {
               </button>
             ))}
           </div>
-          <span className="text-xs text-gray-600 ml-auto">{filtered.length} results</span>
+          <span className="text-xs text-gray-600 ml-auto">{filtered.length} result{filtered.length !== 1 ? "s" : ""}</span>
         </div>
 
-        {/* Table */}
+        {/* Empty state */}
+        {filtered.length === 0 && (
+          <div className="glass-panel rounded-2xl">
+            <EmptyState icon={Ship} title="No vessels match" description={search ? `No ships found for "${search}" — try a different name, ID, or cargo type.` : `No ${filter} vessels in the fleet right now.`} action={search || filter !== "all" ? { label: "Clear filters", onClick: () => { setSearch(""); setFilter("all"); } } : undefined} color="#3b82f6" size="md" />
+          </div>
+        )}
+
+        {/* Card grid view */}
+        {viewMode === "cards" && filtered.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filtered.map((ship: any, i: number) => {
+              const cfg = STATUS_CONFIG[ship.status] || STATUS_CONFIG["on-time"];
+              const riskColor = ship.risk_score >= 70 ? "#ef4444" : ship.risk_score >= 40 ? "#f97316" : "#10b981";
+              const isOpt = optimizing === ship.id;
+              const isDone = optimized.has(ship.id);
+              return (
+                <motion.div key={ship.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                  className="glass-panel rounded-2xl p-5 flex flex-col gap-3 hover:scale-[1.02] transition-transform cursor-pointer border border-white/8 hover:border-white/20"
+                  onClick={() => setSelected(ship)}>
+                  {/* Top row */}
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-black text-white">{ship.name}</p>
+                      <p className="text-[10px] text-gray-600">{ship.flag} · {ship.vessel_type}</p>
+                    </div>
+                    <span className={`text-[10px] font-bold px-2 py-1 rounded-xl border ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
+                  </div>
+                  {/* Risk gauge */}
+                  <div>
+                    <div className="flex justify-between text-[9px] text-gray-600 mb-1">
+                      <span>Risk Score</span><span style={{ color: riskColor }} className="font-black">{ship.risk_score}/100</span>
+                    </div>
+                    <div className="h-1.5 bg-white/8 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full transition-all" style={{ width: `${ship.risk_score}%`, background: riskColor }} />
+                    </div>
+                  </div>
+                  {/* Info row */}
+                  <div className="grid grid-cols-2 gap-2 text-[10px] text-gray-500">
+                    <div className="flex items-center gap-1"><Package size={9} /> {ship.cargo}</div>
+                    <div className="flex items-center gap-1"><MapPin size={9} /> ETA {ship.eta}</div>
+                    <div className="flex items-center gap-1"><Ship size={9} /> ${((ship.cargo_value_usd || 0)/1e6).toFixed(0)}M cargo</div>
+                    <div className="flex items-center gap-1" style={{ color: cfg.color }}>● {ship.status}</div>
+                  </div>
+                  {/* Actions */}
+                  {(ship.status === "at-risk" || ship.status === "delayed") && (
+                    <div className="flex gap-2 mt-1">
+                      <button onClick={e => { e.stopPropagation(); handleOptimize(ship.id); }}
+                        disabled={isOpt || isDone}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-bold transition-all"
+                        style={{ background: isDone ? "rgba(16,185,129,0.15)" : "rgba(249,115,22,0.15)", color: isDone ? "#10b981" : "#f97316" }}>
+                        {isOpt ? <><RefreshCw size={11} className="animate-spin" /> Optimizing...</> : isDone ? <><Check size={11} /> Optimized</> : <><Zap size={11} /> Optimize</>}
+                      </button>
+                      <button onClick={e => { e.stopPropagation(); setEmailShip(ship); }}
+                        className="px-3 py-2 rounded-xl text-[11px] font-bold text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 transition-all">
+                        <Mail size={11} />
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Table (original) */}
+        {viewMode === "table" && filtered.length > 0 &&
         <div className="glass-panel rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
@@ -233,11 +312,9 @@ export default function FleetPage() {
                 </AnimatePresence>
               </tbody>
             </table>
-            {filtered.length === 0 && (
-              <div className="py-16 text-center text-gray-600">No vessels match your search.</div>
-            )}
           </div>
         </div>
+        }
 
         {/* Selected ship detail panel */}
         <AnimatePresence>

@@ -6,6 +6,7 @@ import PushNotifications from "./PushNotifications";
 import GlobalSearch from "./GlobalSearch";
 import KeyboardShortcuts from "./KeyboardShortcuts";
 import GuidedTour from "./GuidedTour";
+import NotificationCenter from "./NotificationCenter";
 import { useState } from "react";
 
 const NAV_PRIMARY = [
@@ -98,6 +99,7 @@ export default function NavBar({ metrics, extraRight }: { metrics?: any; extraRi
           )}
           <GlobalSearch />
           <KeyboardShortcuts />
+          <NotificationCenter />
           <button onClick={() => setTourOpen(true)}
             title="Start guided tour"
             className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-[10px] font-bold text-gray-500 hover:text-white hover:bg-white/10 transition-all">

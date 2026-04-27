@@ -42,7 +42,7 @@ export default function LiveStatusBar() {
 
   if (!pulse && !connected) return (
     <div className="h-8 flex items-center justify-center gap-2 text-[10px] text-red-400 border-b border-red-500/20 bg-red-500/5 px-4">
-      <WifiOff size={10} /> Backend offline — check <code className="mx-1 bg-white/5 px-1 rounded">localhost:8000</code>
+      <WifiOff size={10} /> Backend offline — verify <code className="mx-1 bg-white/5 px-1 rounded">NEXT_PUBLIC_API_URL</code> environment variable
     </div>
   );
 

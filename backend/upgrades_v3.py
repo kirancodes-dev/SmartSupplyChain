@@ -292,7 +292,7 @@ async def carbon_market():
         ]
     }
 
-@app.post("/api/carbon/sell")
+@router.post("/api/carbon/sell")
 async def sell_carbon_credits(request: dict):
     """Tokenize and sell AI-optimized carbon savings as verified credits."""
     tons  = float(request.get("tons", 100))

@@ -514,19 +514,20 @@ Context: {context}
 Output ONLY the JSON, no markdown."""
 
     try:
-        import google.generativeai as genai
-        import re
+        from google import genai
+        from google.genai import types
+        import re, base64
         api_key = os.getenv("GEMINI_API_KEY", "")
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-3-flash")
-        if image_b64:
-            image_data = {"mime_type": "image/jpeg", "data": image_b64}
-            response = model.generate_content([prompt, image_data])
-        else:
-            response = model.generate_content(prompt)
-        j = re.search(r'\{.*\}', response.text, re.DOTALL)
-        if j:
-            return {"result": json.loads(j.group()), "model": "gemini-3-flash", "timestamp": datetime.now().isoformat()}
+        if api_key:
+            client = genai.Client(api_key=api_key)
+            contents = [prompt]
+            if image_b64:
+                img_data = image_b64.split(",")[1] if "," in image_b64 else image_b64
+                contents.append(types.Part.from_bytes(data=base64.b64decode(img_data), mime_type="image/jpeg"))
+            response = client.models.generate_content(model="gemini-3-flash", contents=contents)
+            j = re.search(r'\{.*\}', response.text, re.DOTALL)
+            if j:
+                return {"result": json.loads(j.group()), "model": "gemini-3-flash", "timestamp": datetime.now().isoformat()}
     except Exception as e:
         log.warning(f"Cargo inspect fallback: {e}")
 

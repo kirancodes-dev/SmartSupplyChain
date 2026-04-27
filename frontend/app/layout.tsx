@@ -1,13 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import ClientShell from "@/components/ClientShell";
+
+export const viewport: Viewport = {
+  themeColor: "#060818",
+};
 
 export const metadata: Metadata = {
   title: "Smart Supply Chain AI | Industrial Command Center",
   description: "Industrial-grade AI supply chain disruption detector and optimizer powered by Gemini 3 Flash. Real-time vessel tracking, port monitoring, and autonomous route optimization.",
   keywords: ["supply chain", "AI", "logistics", "maritime", "route optimization", "Gemini", "real-time"],
   manifest: "/manifest.json",
-  themeColor: "#060818",
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Supply Chain AI" },
   openGraph: {
     title: "Smart Supply Chain AI",

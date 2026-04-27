@@ -1,10 +1,30 @@
+import os
+import json
+import time
+import random
+import asyncio
+import base64
+import hashlib
+import sqlite3
+import logging
+from datetime import datetime
+
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+
+from database import get_optimization_log
+from digital_twin import digital_twin
+
+log = logging.getLogger("supply_chain")
+state = digital_twin.state
+
+router = APIRouter()
 
 # ═══════════════════════════════════════════════════════════════
 # UPGRADE 1: VISUAL CARGO INSPECTOR  (Gemini 2.0 Multimodal)
 # ═══════════════════════════════════════════════════════════════
-import base64, hashlib, sqlite3
 
-@app.post("/api/cargo-inspect")
+@router.post("/api/cargo-inspect")
 async def cargo_inspect(request: dict):
     """Gemini Vision analyzes a cargo image: extracts shipment data, flags discrepancies, estimates damage."""
     image_b64 = request.get("image_b64", "")
@@ -39,19 +59,20 @@ Context: {context}
 Output ONLY the JSON, no markdown."""
 
     try:
-        import google.generativeai as genai
-        import re
+        from google import genai
+        from google.genai import types
+        import re, base64
         api_key = os.getenv("GEMINI_API_KEY", "")
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        if image_b64:
-            image_data = {"mime_type": "image/jpeg", "data": image_b64}
-            response = model.generate_content([prompt, image_data])
-        else:
-            response = model.generate_content(prompt)
-        j = re.search(r'\{.*\}', response.text, re.DOTALL)
-        if j:
-            return {"result": json.loads(j.group()), "model": "gemini-2.0-flash", "timestamp": datetime.now().isoformat()}
+        if api_key:
+            client = genai.Client(api_key=api_key)
+            contents = [prompt]
+            if image_b64:
+                img_data = image_b64.split(",")[1] if "," in image_b64 else image_b64
+                contents.append(types.Part.from_bytes(data=base64.b64decode(img_data), mime_type="image/jpeg"))
+            response = client.models.generate_content(model="gemini-3-flash", contents=contents)
+            j = re.search(r'\{.*\}', response.text, re.DOTALL)
+            if j:
+                return {"result": json.loads(j.group()), "model": "gemini-3-flash", "timestamp": datetime.now().isoformat()}
     except Exception as e:
         log.warning(f"Cargo inspect fallback: {e}")
 
@@ -90,7 +111,7 @@ def _build_merkle_root(hashes: list) -> str:
 
 _blockchain_anchors: list = []
 
-@app.post("/api/blockchain/anchor")
+@router.post("/api/blockchain/anchor")
 async def blockchain_anchor():
     """Hash current optimization log as Merkle tree and simulate anchoring to Ethereum Sepolia testnet."""
     try:
@@ -124,11 +145,11 @@ async def blockchain_anchor():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/blockchain/anchors")
+@router.get("/api/blockchain/anchors")
 async def get_anchors():
     return {"anchors": list(reversed(_blockchain_anchors)), "total": len(_blockchain_anchors)}
 
-@app.post("/api/blockchain/verify")
+@router.post("/api/blockchain/verify")
 async def verify_hash(request: dict):
     """Independently verify a record against its stored hash — tamper detection."""
     record_data  = request.get("record_data", "")
@@ -153,7 +174,7 @@ class WhatIfLabRequest(BaseModel):
     query: str
     constraints: dict = {}
 
-@app.post("/api/whatif-lab")
+@router.post("/api/whatif-lab")
 async def whatif_lab(req: WhatIfLabRequest):
     """Gemini parses NL scenario → multi-agent council debate → consensus action plan."""
     ships = state["ships"]
@@ -237,7 +258,7 @@ Output ONLY the JSON. No markdown."""
 _carbon_portfolio: list = []
 _CARBON_BASE_PRICE = 24.80  # USD per ton (EU ETS reference)
 
-@app.get("/api/carbon/market")
+@router.get("/api/carbon/market")
 async def carbon_market():
     """Live carbon credit marketplace — dynamic pricing, portfolio, and open listings."""
     log_entries = get_optimization_log()

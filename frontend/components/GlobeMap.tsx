@@ -1,6 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { Wind, CloudLightning, MousePointer2, X } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { showToast } from "./ToastProvider";
@@ -27,6 +27,19 @@ export default function GlobeMap({ state, onWeatherAdded }: { state: any; onWeat
   const [selectedPort, setSelectedPort] = useState<any>(null);
   const [clickMode, setClickMode] = useState<"view" | "storm">("view");
   const [injecting, setInjecting] = useState(false);
+  const [globeSize, setGlobeSize] = useState({ width: 800, height: 530 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      setGlobeSize({ width: el.offsetWidth, height: el.offsetHeight });
+    });
+    ro.observe(el);
+    setGlobeSize({ width: el.offsetWidth, height: el.offsetHeight });
+    return () => ro.disconnect();
+  }, []);
 
   const arcs = useMemo(() => ships.map((s: any) => {
     const dest = ports.find((p: any) => p.id === s.destination);
@@ -99,11 +112,11 @@ export default function GlobeMap({ state, onWeatherAdded }: { state: any; onWeat
       </div>
 
       {/* Globe */}
-      <div className="flex-1 relative bg-[#03060f]" style={{ cursor: clickMode === "storm" ? "crosshair" : "default" }}>
+      <div ref={containerRef} className="flex-1 relative bg-[#03060f]" style={{ cursor: clickMode === "storm" ? "crosshair" : "default" }}>
         {typeof window !== "undefined" && (
           <Globe
-            width={undefined}
-            height={undefined}
+            width={globeSize.width}
+            height={globeSize.height}
             backgroundColor="rgba(3,6,15,0)"
             globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
             atmosphereColor="#3b82f6"

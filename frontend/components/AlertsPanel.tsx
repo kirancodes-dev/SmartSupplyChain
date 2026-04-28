@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { requestOptimization, analyzeVision } from "@/lib/api";
 import {
   AlertCircle, Zap, Check, Upload,
-  ChevronDown, ChevronUp, Bot, Clock, Ship, Anchor, Eye, AlertTriangle,
+  ChevronDown, ChevronUp, Bot, Clock, Ship, Anchor, Eye, AlertTriangle, MapPin, Navigation,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -11,28 +11,35 @@ import { motion, AnimatePresence } from "framer-motion";
 const SEV: Record<string, { bar: string; badge: string; badgeBg: string; text: string; cardBg: string; cardBorder: string }> = {
   High: {
     bar: "#ef4444",
-    badge: "text-red-300",
-    badgeBg: "bg-red-500/15 border-red-500/30",
+    badge: "text-red-200",
+    badgeBg: "bg-red-500/20 border-red-400/40",
     text: "text-red-300",
-    cardBg: "bg-red-950/20",
-    cardBorder: "border-red-500/25",
+    cardBg: "bg-red-900/15",
+    cardBorder: "border-red-500/30",
   },
   Medium: {
     bar: "#f97316",
-    badge: "text-orange-300",
-    badgeBg: "bg-orange-500/15 border-orange-500/30",
+    badge: "text-orange-200",
+    badgeBg: "bg-orange-500/20 border-orange-400/40",
     text: "text-orange-300",
-    cardBg: "bg-orange-950/20",
+    cardBg: "bg-orange-900/12",
     cardBorder: "border-orange-500/25",
   },
   Low: {
     bar: "#3b82f6",
-    badge: "text-blue-300",
-    badgeBg: "bg-blue-500/15 border-blue-500/30",
+    badge: "text-blue-200",
+    badgeBg: "bg-blue-500/20 border-blue-400/40",
     text: "text-blue-300",
-    cardBg: "bg-blue-950/20",
-    cardBorder: "border-blue-500/25",
+    cardBg: "bg-blue-900/10",
+    cardBorder: "border-blue-500/20",
   },
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  "on-time":  "#10b981",
+  "at-risk":  "#f97316",
+  "delayed":  "#ef4444",
+  "rerouted": "#3b82f6",
 };
 
 const TYPE_ICONS: Record<string, any> = {
@@ -52,8 +59,136 @@ function timeAgo(ts: string) {
   } catch { return "just now"; }
 }
 
+/* ─── Mini Route Map ─────────────────────────────────────────── */
+function ShipRouteMap({ ship, destPort }: { ship: any; destPort: any }) {
+  const W = 284, H = 130;
+  const PAD = 24;
+
+  const lats = [ship.lat ?? 35, destPort?.lat ?? 30];
+  const lngs = [ship.lng ?? 120, destPort?.lng ?? 115];
+  const latSpan = Math.max(12, Math.abs(lats[0] - lats[1]) * 1.6);
+  const lngSpan = Math.max(20, Math.abs(lngs[0] - lngs[1]) * 1.6);
+  const midLat = (lats[0] + lats[1]) / 2;
+  const midLng = (lngs[0] + lngs[1]) / 2;
+  const minLat = midLat - latSpan / 2;
+  const maxLat = midLat + latSpan / 2;
+  const minLng = midLng - lngSpan / 2;
+  const maxLng = midLng + lngSpan / 2;
+
+  const toXY = (lat: number, lng: number) => ({
+    x: Math.round(PAD + ((lng - minLng) / (maxLng - minLng)) * (W - PAD * 2)),
+    y: Math.round(PAD + ((maxLat - lat) / (maxLat - minLat)) * (H - PAD * 2)),
+  });
+
+  const sXY = toXY(ship.lat ?? 35, ship.lng ?? 120);
+  const pXY = destPort ? toXY(destPort.lat, destPort.lng) : { x: W - PAD, y: H / 2 };
+  const col = STATUS_COLORS[ship.status] || "#3b82f6";
+  const portName = destPort?.name?.split(" ")[0] || destPort?.id || "Dest";
+
+  return (
+    <div className="w-full rounded-xl overflow-hidden border border-white/8" style={{ background: "#060e1f" }}>
+      <svg width="100%" viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="sg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#0d2a4a" />
+            <stop offset="100%" stopColor="#04060f" />
+          </radialGradient>
+          <radialGradient id={`glow-${ship.id}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={col} stopOpacity="0.45" />
+            <stop offset="100%" stopColor={col} stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        {/* Ocean background */}
+        <rect width={W} height={H} fill="url(#sg)" />
+
+        {/* Grid lines */}
+        {[0.25, 0.5, 0.75].map(t => (
+          <g key={t}>
+            <line x1={W * t} y1="0" x2={W * t} y2={H} stroke="#1e3a5f" strokeWidth="0.5" />
+            <line x1="0" y1={H * t} x2={W} y2={H * t} stroke="#1e3a5f" strokeWidth="0.5" />
+          </g>
+        ))}
+
+        {/* Equator hint (if visible) */}
+        {minLat < 0 && maxLat > 0 && (
+          <line x1="0" y1={toXY(0, midLng).y} x2={W} y2={toXY(0, midLng).y}
+            stroke="rgba(255,255,255,0.06)" strokeWidth="0.8" strokeDasharray="4,6" />
+        )}
+
+        {/* Route line */}
+        <line x1={sXY.x} y1={sXY.y} x2={pXY.x} y2={pXY.y}
+          stroke={col} strokeWidth="1.5" strokeDasharray="7,5" opacity="0.7" />
+
+        {/* Port marker */}
+        <circle cx={pXY.x} cy={pXY.y} r="9" fill="#0f2240" stroke="#3b82f6" strokeWidth="1.5" />
+        <text x={pXY.x} y={pXY.y + 1} textAnchor="middle" dominantBaseline="middle" fontSize="9" fill="#60a5fa">⚓</text>
+        <text x={pXY.x} y={pXY.y + 16} textAnchor="middle" fontSize="7" fill="rgba(148,163,184,0.85)" fontWeight="700">{portName}</text>
+
+        {/* Ship glow */}
+        <circle cx={sXY.x} cy={sXY.y} r="20" fill={`url(#glow-${ship.id})`} />
+
+        {/* Pulse ring animation */}
+        <circle cx={sXY.x} cy={sXY.y} r="10" fill="none" stroke={col} strokeWidth="1" opacity="0.5">
+          <animate attributeName="r" values="6;18;6" dur="2.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.6;0;0.6" dur="2.5s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Ship dot */}
+        <circle cx={sXY.x} cy={sXY.y} r="5.5" fill={col} stroke="white" strokeWidth="1.5" />
+        {/* Ship icon triangle */}
+        <path d={`M ${sXY.x} ${sXY.y - 3} L ${sXY.x + 2.5} ${sXY.y + 2} L ${sXY.x - 2.5} ${sXY.y + 2} Z`} fill="white" opacity="0.9" />
+
+        {/* Ship label */}
+        <text x={sXY.x} y={sXY.y - 14} textAnchor="middle" fontSize="8.5" fill="white" fontWeight="800">{ship.name || ship.id}</text>
+
+        {/* Coords + speed */}
+        <text x="5" y={H - 5} fontSize="7" fill="rgba(100,116,139,0.8)" fontFamily="monospace">
+          {(ship.lat ?? 0).toFixed(1)}°{(ship.lat ?? 0) >= 0 ? "N" : "S"} {(ship.lng ?? 0).toFixed(1)}°{(ship.lng ?? 0) >= 0 ? "E" : "W"}
+        </text>
+        {ship.speed_knots && (
+          <text x={W - 5} y={H - 5} textAnchor="end" fontSize="7" fill="rgba(100,116,139,0.8)">
+            {ship.speed_knots}kn
+          </text>
+        )}
+      </svg>
+
+      {/* Stats row below map */}
+      <div className="flex items-center justify-between px-3 py-2 border-t border-white/6 text-[10px]">
+        <div className="flex items-center gap-1.5 text-gray-400">
+          <Navigation size={9} style={{ color: col }} />
+          <span style={{ color: col }} className="font-bold uppercase">{ship.status}</span>
+        </div>
+        <div className="text-gray-500">
+          <span className="text-white font-semibold">{ship.cargo || "Mixed Cargo"}</span>
+        </div>
+        {ship.cargo_value_usd && (
+          <div className="text-emerald-400 font-bold">
+            ${((ship.cargo_value_usd) / 1e6).toFixed(1)}M
+          </div>
+        )}
+        {ship.eta && (
+          <div className="text-blue-400">
+            ETA {ship.eta}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Component ──────────────────────────────────────────────── */
-export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; onOptimized: () => void }) {
+export default function AlertsPanel({
+  alerts,
+  ships = [],
+  ports = [],
+  onOptimized,
+}: {
+  alerts: any[];
+  ships?: any[];
+  ports?: any[];
+  onOptimized: () => void;
+}) {
   const [optimizing, setOptimizing] = useState<string | null>(null);
   const [success, setSuccess]       = useState<string | null>(null);
   const [uploading, setUploading]   = useState(false);
@@ -65,9 +200,11 @@ export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; on
   const handleExplain = async (alert: any) => {
     if (explanations[alert.id]) { setExplanations(p => ({ ...p, [alert.id]: "" })); return; }
     setExplaining(alert.id);
+    const ship = ships.find(s => s.id === alert.ship_id);
+    const shipCtx = ship ? ` Ship ${ship.name} at ${ship.lat?.toFixed(1)}°, ${ship.lng?.toFixed(1)}°, status: ${ship.status}.` : "";
     try {
       const res = await import("@/lib/api").then(m => m.chatWithAI(
-        `In 2 concise sentences, explain the supply chain risk and recommended action for this alert: [${alert.severity} ${alert.type}] ${alert.message}`
+        `In 2 concise sentences, explain the supply chain risk and recommended action for: [${alert.severity} ${alert.type}] ${alert.message}${shipCtx}`
       ));
       setExplanations(p => ({ ...p, [alert.id]: res.reply || "Analysis complete." }));
     } catch {
@@ -123,10 +260,10 @@ export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; on
           </div>
           <div>
             <h2 className="text-sm font-bold text-white">Disruption Alerts</h2>
-            <p className="text-[10px] text-gray-500 mt-0.5">
+            <p className="text-xs text-gray-500 mt-0.5">
               {alerts.length} active
-              {highCount > 0 && <span className="text-red-400 ml-1.5">· {highCount} critical</span>}
-              {medCount > 0  && <span className="text-orange-400 ml-1.5">· {medCount} medium</span>}
+              {highCount > 0 && <span className="text-red-400 font-semibold ml-1.5">· {highCount} critical</span>}
+              {medCount > 0  && <span className="text-orange-400 font-semibold ml-1.5">· {medCount} medium</span>}
             </p>
           </div>
         </div>
@@ -135,25 +272,25 @@ export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; on
           <button
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
-            className="flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-lg border border-purple-500/30 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-purple-500/30 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 transition-all disabled:opacity-50"
           >
             {uploading
               ? <><span className="w-3 h-3 border-2 border-purple-400/30 border-t-purple-400 rounded-full animate-spin" /> Scanning...</>
-              : <><Upload size={11} /> Vision Scan</>
+              : <><Upload size={12} /> Vision Scan</>
             }
           </button>
         </div>
       </div>
 
-      {/* ── Severity summary bar ── */}
+      {/* ── Severity bar ── */}
       {alerts.length > 0 && (
         <div className="px-5 py-2 border-b border-white/5 shrink-0 flex items-center gap-3">
-          <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-white/5 flex gap-0.5">
+          <div className="flex-1 h-2 rounded-full overflow-hidden bg-white/5 flex gap-0.5">
             {highCount > 0 && <div className="h-full bg-red-500 rounded-full" style={{ width: `${(highCount / alerts.length) * 100}%` }} />}
             {medCount > 0  && <div className="h-full bg-orange-500 rounded-full" style={{ width: `${(medCount / alerts.length) * 100}%` }} />}
-            <div className="h-full bg-blue-500 rounded-full flex-1" />
+            <div className="h-full bg-blue-500/60 rounded-full flex-1" />
           </div>
-          <span className="text-[9px] text-gray-600 whitespace-nowrap">{alerts.length} events</span>
+          <span className="text-xs text-gray-500 whitespace-nowrap font-medium">{alerts.length} events</span>
         </div>
       )}
 
@@ -177,6 +314,8 @@ export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; on
             const isAuto     = alert.message?.startsWith("[AUTO-PILOT");
             const Icon       = TYPE_ICONS[alert.type] || AlertCircle;
             const cleanMsg   = isAuto ? alert.message.replace("[AUTO-PILOT] ", "") : alert.message;
+            const matchedShip = ships.find(s => s.id === alert.ship_id);
+            const destPort    = matchedShip ? ports.find(p => p.id === matchedShip.destination) : null;
 
             return (
               <motion.div
@@ -190,14 +329,14 @@ export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; on
               >
                 {/* Card body */}
                 <button
-                  className="w-full p-3 text-left flex items-start gap-3 hover:bg-white/3 transition-colors"
+                  className="w-full p-3 text-left flex items-start gap-3 hover:bg-white/4 transition-colors"
                   onClick={() => setExpanded(isExpanded ? null : alert.id)}
                 >
-                  {/* Left: colored accent bar + icon */}
+                  {/* Left accent bar + icon */}
                   <div className="flex items-stretch gap-2 shrink-0">
-                    <div className="w-0.5 self-stretch rounded-full" style={{ background: cfg.bar }} />
+                    <div className="w-1 self-stretch rounded-full" style={{ background: cfg.bar }} />
                     <div className="p-1.5 rounded-lg mt-0.5" style={{ background: cfg.bar + "20" }}>
-                      <Icon size={13} style={{ color: cfg.bar }} />
+                      <Icon size={14} style={{ color: cfg.bar }} />
                     </div>
                   </div>
 
@@ -206,56 +345,77 @@ export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; on
                     {/* Top row */}
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${cfg.badgeBg} ${cfg.badge}`}>
+                        <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${cfg.badgeBg} ${cfg.badge}`}>
                           {alert.severity}
                         </span>
-                        <span className="text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
+                        <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">
                           {alert.type}
                         </span>
                         {isAuto && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full border text-emerald-300 border-emerald-500/30 bg-emerald-500/10 flex items-center gap-1">
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full border text-emerald-300 border-emerald-500/30 bg-emerald-500/10 flex items-center gap-1">
                             <Bot size={8} /> Auto
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-1 text-gray-600 shrink-0">
+                      <div className="flex items-center gap-1 text-gray-500 shrink-0">
                         <Clock size={9} />
-                        <span className="text-[9px]">{timeAgo(alert.timestamp)}</span>
+                        <span className="text-[10px]">{timeAgo(alert.timestamp)}</span>
                       </div>
                     </div>
 
-                    {/* Message — fully readable */}
-                    <p className="text-[11px] text-gray-200 leading-relaxed font-medium line-clamp-2">
-                      {cleanMsg}
+                    {/* Message */}
+                    <p className="text-xs text-gray-200 leading-relaxed font-medium line-clamp-2">
+                      {cleanMsg || "Alert detected — click to expand for details."}
                     </p>
 
-                    {/* Entity ref */}
-                    {alert.related_entity && (
-                      <p className="text-[9px] font-mono text-gray-600 mt-1">
-                        ID: {alert.related_entity}
-                      </p>
+                    {/* Ship badge (if matched) */}
+                    {matchedShip && (
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <MapPin size={9} className="text-blue-400 shrink-0" />
+                        <span className="text-[10px] font-bold text-blue-300">{matchedShip.name}</span>
+                        <span className="text-[9px] text-gray-600">
+                          {matchedShip.lat?.toFixed(1)}°, {matchedShip.lng?.toFixed(1)}°
+                        </span>
+                        {matchedShip.risk_score && (
+                          <span className="ml-auto text-[9px] font-black" style={{ color: matchedShip.risk_score > 70 ? "#ef4444" : matchedShip.risk_score > 40 ? "#f97316" : "#10b981" }}>
+                            Risk {matchedShip.risk_score}/100
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
 
                   {/* Expand arrow */}
                   <div className="shrink-0 mt-1">
                     {isExpanded
-                      ? <ChevronUp size={13} className="text-gray-500" />
-                      : <ChevronDown size={13} className="text-gray-500" />}
+                      ? <ChevronUp size={14} className="text-gray-400" />
+                      : <ChevronDown size={14} className="text-gray-400" />}
                   </div>
                 </button>
 
-                {/* Expanded section */}
+                {/* ── Expanded section ── */}
                 <AnimatePresence>
                   {isExpanded && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-white/6 overflow-hidden"
+                      className="border-t border-white/8 overflow-hidden"
                     >
-                      <div className="px-4 py-3 flex flex-col gap-2">
-                        <p className="text-xs text-gray-400 leading-relaxed">{cleanMsg}</p>
+                      <div className="px-4 py-3 flex flex-col gap-3">
+
+                        {/* Full message */}
+                        <p className="text-xs text-gray-300 leading-relaxed">{cleanMsg}</p>
+
+                        {/* Ship + Route Mini Map */}
+                        {matchedShip && (
+                          <div className="flex flex-col gap-1.5">
+                            <p className="text-[10px] font-bold text-gray-400 flex items-center gap-1.5">
+                              <Ship size={10} className="text-blue-400" /> Live Vessel Position
+                            </p>
+                            <ShipRouteMap ship={matchedShip} destPort={destPort} />
+                          </div>
+                        )}
 
                         {/* Gemini Explains */}
                         <button
@@ -269,7 +429,7 @@ export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; on
                         </button>
                         {explanations[alert.id] && (
                           <div className="p-3 rounded-lg bg-purple-500/8 border border-purple-500/20">
-                            <p className="text-[11px] text-purple-200 leading-relaxed">{explanations[alert.id]}</p>
+                            <p className="text-xs text-purple-200 leading-relaxed">{explanations[alert.id]}</p>
                           </div>
                         )}
 
@@ -304,10 +464,10 @@ export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; on
 
       {/* ── Footer ── */}
       <div className="px-5 py-2 border-t border-white/5 bg-black/20 shrink-0 flex items-center justify-between">
-        <p className="text-[10px] text-gray-700">Click alert to expand · Upload image for AI scan</p>
+        <p className="text-[10px] text-gray-600">Click alert to see ship position · Vision scan for AI analysis</p>
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[9px] text-gray-700">AI Monitoring Live</span>
+          <span className="text-[10px] text-gray-600">AI Monitoring Live</span>
         </div>
       </div>
     </div>

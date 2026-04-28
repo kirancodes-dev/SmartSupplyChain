@@ -37,7 +37,7 @@ export default function LeaderboardPage() {
       const ranked = (res?.ships || [])
         .map((s: any) => ({ ...s, perf: calcPerf(s) }))
         .sort((a: any, b: any) => b.perf - a.perf)
-        .map((s: any, i: number) => ({ ...s, rank: i + 1, delta: Math.floor(Math.random() * 3) - 1 }));
+        .map((s: any, i: number) => ({ ...s, rank: i + 1, delta: (parseInt(s.id?.replace(/\D/g, "") || "0", 10) % 3) - 1 }));
       setShips(ranked);
     } catch {}
     setLoading(false);

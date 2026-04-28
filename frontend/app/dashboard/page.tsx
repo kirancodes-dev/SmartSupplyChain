@@ -183,7 +183,7 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2"><GlobeMap state={state} onWeatherAdded={loadMetrics} /></div>
-          <div className="lg:col-span-1"><AlertsPanel alerts={state?.alerts || []} onOptimized={loadMetrics} /></div>
+          <div className="lg:col-span-1"><AlertsPanel alerts={state?.alerts || []} ships={state?.ships || []} ports={state?.ports || []} onOptimized={loadMetrics} /></div>
         </div>
 
         <SavingsPanel state={state} metrics={metrics} />
@@ -225,7 +225,7 @@ export default function DashboardPage() {
         </div>
 
         <footer className="text-center text-[10px] text-gray-700 pb-2">
-          Smart Supply Chain AI v2.0 · Gemini 3 Flash · Google H2S Hackathon 2026 · Press <kbd className="font-mono bg-white/10 px-1 rounded">⌘K</kbd> for commands
+          Smart Supply Chain AI v2.0 · Gemini 2.0 Flash · Google H2S Hackathon 2026 · Press <kbd className="font-mono bg-white/10 px-1 rounded">⌘K</kbd> for commands
         </footer>
       </main>
       <ChatWidget />

@@ -8,6 +8,7 @@ import {
   Lightbulb, Map, Activity, ChevronRight, Sparkles, Clock, Camera, DollarSign
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { apiFetch } from "@/lib/api";
 
 const QUICK_START = [
   {
@@ -55,23 +56,40 @@ const ALL_PAGES = [
   { icon: Sparkles, label: "Settings", href: "/settings", desc: "Tune AI parameters", color: "#64748b" },
 ];
 
-const STATS = [
-  { v: "15", label: "Live Vessels" },
-  { v: "$4.2M", label: "Daily Savings" },
-  { v: "1,240t", label: "CO₂ Prevented" },
-  { v: "< 2s", label: "AI Response" },
-  { v: "18", label: "Platform Pages" },
-  { v: "99.8%", label: "Uptime" },
-];
-
 export default function LandingPage() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef });
   const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const [animStats, setAnimStats] = useState(false);
+  const [liveStats, setLiveStats] = useState([
+    { v: "15", label: "Live Vessels" },
+    { v: "$4.2M", label: "Daily Savings" },
+    { v: "1,240t", label: "CO₂ Prevented" },
+    { v: "< 2s", label: "AI Response" },
+    { v: "18", label: "Platform Pages" },
+    { v: "99.8%", label: "Uptime" },
+  ]);
 
   useEffect(() => {
     const t = setTimeout(() => setAnimStats(true), 600);
+    const fetchLive = async () => {
+      try {
+        const [metrics, fleet] = await Promise.all([apiFetch("/metrics"), apiFetch("/fleet")]);
+        const vessels = fleet?.ships?.length ?? 15;
+        const resolved = metrics?.total_alerts_resolved ?? 0;
+        const co2 = metrics?.total_co2_saved_tons ?? 0;
+        const savings = resolved * 112500;
+        setLiveStats([
+          { v: String(vessels), label: "Live Vessels" },
+          { v: savings >= 1e6 ? `$${(savings / 1e6).toFixed(1)}M` : `$${Math.round(savings / 1000)}K`, label: "Daily Savings" },
+          { v: co2 >= 1000 ? `${(co2 / 1000).toFixed(1)}kt` : `${co2}t`, label: "CO₂ Prevented" },
+          { v: "< 2s", label: "AI Response" },
+          { v: "18", label: "Platform Pages" },
+          { v: "99.8%", label: "Uptime" },
+        ]);
+      } catch {}
+    };
+    fetchLive();
     return () => clearTimeout(t);
   }, []);
 
@@ -148,7 +166,7 @@ export default function LandingPage() {
         {/* Animated stats */}
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.65 }}
           className="grid grid-cols-3 md:grid-cols-6 gap-3 max-w-4xl w-full">
-          {STATS.map((s, i) => (
+          {liveStats.map((s, i) => (
             <div key={i} className="rounded-2xl p-3 text-center border border-white/8" style={{ background: "rgba(255,255,255,0.03)" }}>
               <p className="text-xl md:text-2xl font-black text-white">{s.v}</p>
               <p className="text-[10px] text-gray-600 mt-0.5">{s.label}</p>

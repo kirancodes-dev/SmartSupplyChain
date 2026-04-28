@@ -120,6 +120,25 @@ export default function ESGPage() {
           </div>
         </div>
 
+        {/* Projected Annual Impact */}
+        <div className="glass-panel rounded-2xl p-5 border border-emerald-500/20">
+          <h2 className="text-sm font-bold text-white mb-4 flex items-center gap-2"><TrendingDown size={14} className="text-emerald-400"/> Projected Annual Business Impact</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: "Annual CO₂ Savings",      value: `${(totalCO2 * 52).toLocaleString()}t`,             sub: "at current weekly rate",         color: "#10b981" },
+              { label: "Annual Carbon Revenue",    value: `$${((totalCO2 * 52 * 65)/1000).toFixed(0)}K`,      sub: "@ $65/ton market rate",           color: "#a855f7" },
+              { label: "Delay Costs Avoided",      value: `$${((log.length * 52 * 2.5 * 45000)/1e6).toFixed(1)}M`, sub: "$45K/day demurrage avoided",  color: "#3b82f6" },
+              { label: "IMO 2030 Trajectory",      value: `On Track`,                                          sub: `${imoProgress}% of 40% achieved`, color: "#f59e0b" },
+            ].map(item => (
+              <div key={item.label} className="rounded-xl p-4 border" style={{ borderColor: item.color + "25", background: item.color + "08" }}>
+                <p className="text-2xl font-black" style={{ color: item.color }}>{item.value}</p>
+                <p className="text-xs font-bold text-white mt-1">{item.label}</p>
+                <p className="text-[10px] text-gray-600 mt-0.5">{item.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Certifications */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[

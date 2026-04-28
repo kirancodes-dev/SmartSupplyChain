@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Globe2, Ship, Zap, Leaf, Bot, Eye, X, ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 const FEATURES = [
   { icon: Globe2, color: "#3b82f6", title: "3D Globe", desc: "Live vessel & port tracking on an interactive WebGL globe. Hover ships for details." },
@@ -17,8 +16,6 @@ const DISMISSED_KEY = "ssc_onboarded";
 
 export default function OnboardingModal() {
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState(0);
-  const router = useRouter();
 
   useEffect(() => {
     const dismissed = localStorage.getItem(DISMISSED_KEY);
@@ -55,7 +52,19 @@ export default function OnboardingModal() {
                 <Globe2 size={28} className="text-white" />
               </div>
               <h2 className="text-2xl font-black gradient-text mb-2">Smart Supply Chain AI</h2>
-              <p className="text-gray-400 text-sm">Industrial-grade AI for global logistics · Powered by Gemini 3</p>
+              <p className="text-gray-400 text-sm">Industrial-grade AI for global logistics · Powered by Gemini 2.0 Flash</p>
+              <div className="flex items-center justify-center gap-4 mt-3">
+                {[
+                  { value: "15", label: "Live Vessels" },
+                  { value: "12", label: "Ports Monitored" },
+                  { value: "4", label: "AI Agents" },
+                ].map(s => (
+                  <div key={s.label} className="text-center">
+                    <p className="text-lg font-black text-white">{s.value}</p>
+                    <p className="text-[9px] text-gray-500">{s.label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Features grid */}

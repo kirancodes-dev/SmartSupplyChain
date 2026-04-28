@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { Database, Brain, Zap, Globe2, ArrowRight, Bot, AlertTriangle, RefreshCw, Leaf } from "lucide-react";
+import { Brain, Zap, Globe2, ArrowRight, Bot, AlertTriangle, RefreshCw, Leaf } from "lucide-react";
 import NavBar from "@/components/NavBar";
 import ChatWidget from "@/components/ChatWidget";
 
@@ -43,7 +43,7 @@ export default function ArchitecturePage() {
 
         <div className="text-center">
           <h1 className="text-3xl font-black gradient-text mb-2">Multi-Agent AI Architecture</h1>
-          <p className="text-gray-500 text-sm">How Gemini 3 orchestrates 4 specialized agents to preemptively protect global supply chains</p>
+          <p className="text-gray-500 text-sm">How Gemini 2.0 Flash orchestrates 4 specialized agents to preemptively protect global supply chains</p>
         </div>
 
         {/* Pipeline Diagram */}
@@ -133,10 +133,10 @@ export default function ArchitecturePage() {
           <h2 className="text-sm font-bold text-white mb-4">Full Technology Stack</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { category: "AI / ML", items: ["Gemini 3 Flash", "Function Calling", "Vision API", "Agentic Auto-Pilot"] },
+              { category: "AI / ML", items: ["Gemini 2.0 Flash", "Function Calling", "Vision API", "Agentic Auto-Pilot"] },
               { category: "Backend", items: ["FastAPI (Python)", "WebSocket", "SQLite + aiosqlite", "Pydantic v2"] },
               { category: "Frontend", items: ["Next.js 16 (App Router)", "react-globe.gl", "Chart.js", "Framer Motion"] },
-              { category: "DevOps", items: ["Docker + Compose", "Google Cloud Run", "GitHub CI/CD", "Health Checks"] },
+              { category: "DevOps", items: ["Docker", "Railway (Cloud)", "GitHub CI/CD", "Health Checks"] },
             ].map(col => (
               <div key={col.category} className="glass-bright rounded-xl p-4">
                 <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-3">{col.category}</p>

@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import { requestOptimization, analyzeVision } from "@/lib/api";
 import {
-  AlertCircle, Zap, Check, Upload, Image as ImageIcon,
+  AlertCircle, Zap, Check, Upload,
   ChevronDown, ChevronUp, Bot, Clock, Ship, Anchor, Eye, AlertTriangle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -58,7 +58,23 @@ export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; on
   const [success, setSuccess]       = useState<string | null>(null);
   const [uploading, setUploading]   = useState(false);
   const [expanded, setExpanded]     = useState<string | null>(null);
+  const [explaining, setExplaining] = useState<string | null>(null);
+  const [explanations, setExplanations] = useState<Record<string, string>>({});
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleExplain = async (alert: any) => {
+    if (explanations[alert.id]) { setExplanations(p => ({ ...p, [alert.id]: "" })); return; }
+    setExplaining(alert.id);
+    try {
+      const res = await import("@/lib/api").then(m => m.chatWithAI(
+        `In 2 concise sentences, explain the supply chain risk and recommended action for this alert: [${alert.severity} ${alert.type}] ${alert.message}`
+      ));
+      setExplanations(p => ({ ...p, [alert.id]: res.reply || "Analysis complete." }));
+    } catch {
+      setExplanations(p => ({ ...p, [alert.id]: "AI analysis temporarily unavailable." }));
+    }
+    setExplaining(null);
+  };
 
   const handleOptimize = async (shipId: string, alertId: string) => {
     try {
@@ -238,8 +254,25 @@ export default function AlertsPanel({ alerts, onOptimized }: { alerts: any[]; on
                       exit={{ height: 0, opacity: 0 }}
                       className="border-t border-white/6 overflow-hidden"
                     >
-                      <div className="px-4 py-3">
-                        <p className="text-xs text-gray-400 leading-relaxed mb-3">{cleanMsg}</p>
+                      <div className="px-4 py-3 flex flex-col gap-2">
+                        <p className="text-xs text-gray-400 leading-relaxed">{cleanMsg}</p>
+
+                        {/* Gemini Explains */}
+                        <button
+                          onClick={() => handleExplain(alert)}
+                          disabled={explaining === alert.id}
+                          className="w-full py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 border border-purple-500/30 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 transition-all disabled:opacity-60"
+                        >
+                          {explaining === alert.id
+                            ? <><span className="w-3 h-3 border-2 border-purple-400/30 border-t-purple-400 rounded-full animate-spin" /> Gemini Analyzing...</>
+                            : <><Bot size={11} /> {explanations[alert.id] ? "Refresh AI Analysis" : "Ask Gemini to Explain"}</>}
+                        </button>
+                        {explanations[alert.id] && (
+                          <div className="p-3 rounded-lg bg-purple-500/8 border border-purple-500/20">
+                            <p className="text-[11px] text-purple-200 leading-relaxed">{explanations[alert.id]}</p>
+                          </div>
+                        )}
+
                         {alert.actionable && alert.ship_id && (
                           <button
                             onClick={() => handleOptimize(alert.ship_id, alert.id)}

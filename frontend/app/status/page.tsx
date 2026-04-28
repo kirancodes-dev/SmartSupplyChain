@@ -23,7 +23,7 @@ const INIT: Service[] = [
   { name: "Gemini 3 Flash", icon: Bot, description: "AI inference engine", endpoint: "/chat", status: "checking" },
   { name: "SQLite Database", icon: Database, description: "Optimization log & history", endpoint: "/optimization-log", status: "checking" },
   { name: "Forecast Engine", icon: Zap, description: "24h predictive analytics", endpoint: "/forecast", status: "checking" },
-  { name: "Weather Simulation", icon: Activity, description: "Storm injection system", endpoint: "/weather-events", status: "checking" },
+  { name: "Weather Simulation", icon: Activity, description: "Storm injection system", endpoint: "/weather", status: "checking" },
 ];
 
 const STATUS_CFG = {

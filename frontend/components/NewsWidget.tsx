@@ -41,12 +41,14 @@ export default function NewsWidget() {
 
   return (
     <div className="glass-panel rounded-2xl overflow-hidden border border-white/8">
-      <div className="px-5 py-3.5 border-b border-white/8 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Newspaper size={14} className="text-orange-400" />
+      <div className="px-5 py-4 border-b border-white/8 flex items-center justify-between bg-black/20">
+        <div className="flex items-center gap-3">
+          <div className="p-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+            <Newspaper size={15} className="text-indigo-400" />
+          </div>
           <div>
             <h3 className="text-sm font-bold text-white">AI Maritime Intelligence Feed</h3>
-            <p className="text-[10px] text-gray-500">Gemini-analyzed global shipping news · {lastUpdate ? `${lastUpdate.toLocaleTimeString()}` : "Loading..."}</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">Gemini-analyzed global shipping news · {lastUpdate ? `${lastUpdate.toLocaleTimeString()}` : "Loading..."}</p>
           </div>
         </div>
         <button onClick={load} disabled={loading}
@@ -85,13 +87,13 @@ export default function NewsWidget() {
                   <AnimatePresence>
                     {isOpen && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                        <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">{item.summary}</p>
+                        <p className="text-[11px] text-gray-300 mt-1.5 leading-relaxed font-medium">{item.summary}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="text-[9px] text-gray-700">{item.time}</span>
-                    <span className="text-[9px] font-semibold" style={{ color: sev.color }}>⚡ {item.impact}</span>
+                  <div className="flex items-center gap-3 mt-1.5">
+                    <span className="text-[9px] font-mono text-gray-500">{item.time}</span>
+                    <span className="text-[10px] font-bold" style={{ color: sev.color }}>⚡ {item.impact}</span>
                   </div>
                 </div>
               </div>

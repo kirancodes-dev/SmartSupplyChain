@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { WS_URL, toggleAutopilot, fetchMetrics } from "@/lib/api";
+import { getWsUrl, toggleAutopilot, fetchMetrics } from "@/lib/api";
 import NavBar from "@/components/NavBar";
 import GlobeMap from "@/components/GlobeMap";
 import AlertsPanel from "@/components/AlertsPanel";
@@ -44,9 +44,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     let reconnectTimer: NodeJS.Timeout;
-    const connect = () => {
+    const connect = async () => {
       try {
-        const ws = new WebSocket(WS_URL);
+        const wsUrl = await getWsUrl();
+        const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
         ws.onopen = () => {
           setWsConnected(true);

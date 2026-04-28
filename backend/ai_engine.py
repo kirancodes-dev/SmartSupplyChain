@@ -59,7 +59,7 @@ def analyze_disruptions(state: dict) -> list:
         if port.get("status") == "Congested":
             util = int((port.get("current_load", 0) / max(port.get("capacity", 1), 1)) * 100)
             alerts.append({
-                "id": f"alert-port-{port['id']}-{random.randint(1000,9999)}",
+                "id": f"alert-port-{port['id']}",
                 "type": "Port Congestion", "severity": "High",
                 "message": f"{port.get('full_name', port['name'])} at {util}% capacity. Expected delay: 3–5 days.",
                 "related_entity": port["id"], "actionable": False,
@@ -71,7 +71,7 @@ def analyze_disruptions(state: dict) -> list:
         if ship.get("status") in ("at-risk", "delayed") or risk >= 60:
             sev = "High" if risk >= 70 else "Medium"
             alerts.append({
-                "id": f"alert-ship-{ship['id']}-{random.randint(1000,9999)}",
+                "id": f"alert-ship-{ship['id']}",
                 "type": "Transit Risk", "severity": sev,
                 "message": f"{ship['name']} [{ship['cargo']}, ${ship.get('cargo_value_usd',0):,}] — Risk score {risk}/100. Route assessment recommended.",
                 "related_entity": ship["id"], "actionable": True, "ship_id": ship["id"],

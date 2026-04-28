@@ -1,7 +1,14 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000/ws";
+const API_URL = "/api";
 
-export { WS_URL };
+export async function getWsUrl(): Promise<string> {
+  try {
+    const res = await fetch("/api/config");
+    const { wsUrl } = await res.json();
+    return wsUrl as string;
+  } catch {
+    return "ws://localhost:8000/ws";
+  }
+}
 
 export async function apiFetch(path: string, opts?: RequestInit) {
   const res = await fetch(`${API_URL}${path}`, { cache: "no-store", ...opts });

@@ -86,14 +86,12 @@ export default function GlobeMap({ state, onWeatherAdded }: { state: any; onWeat
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-emerald-400 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400"/>{onTime} On Time</span>
-          <span className="text-white/20">·</span>
-          <span className="text-xs text-orange-400 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-400"/>{atRisk} At Risk</span>
-          <span className="text-white/20">·</span>
-          <span className="text-xs text-blue-400 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-400"/>{rerouted} Rerouted</span>
+          <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20"><span className="pulse-dot pulse-dot-emerald"/>{onTime} On Time</span>
+          <span className="text-[10px] font-bold text-orange-400 flex items-center gap-1.5 px-2 py-1 bg-orange-500/10 rounded-lg border border-orange-500/20"><span className="pulse-dot pulse-dot-orange"/>{atRisk} At Risk</span>
+          <span className="text-[10px] font-bold text-blue-400 flex items-center gap-1.5 px-2 py-1 bg-blue-500/10 rounded-lg border border-blue-500/20"><span className="pulse-dot pulse-dot-blue"/>{rerouted} Rerouted</span>
           <button
             onClick={() => setClickMode(m => m === "storm" ? "view" : "storm")}
-            className={`ml-3 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-lg border transition-all ${clickMode === "storm" ? "border-red-500/50 bg-red-500/20 text-red-300 animate-pulse" : "border-white/15 bg-white/5 text-gray-400 hover:text-white"}`}
+            className={`ml-3 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-lg border transition-all ${clickMode === "storm" ? "border-red-500/50 bg-red-500/20 text-red-300 animate-pulse glow-red" : "border-white/15 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10"}`}
           >
             {clickMode === "storm" ? <><CloudLightning size={11}/> Drop Storm Mode</> : <><MousePointer2 size={11}/> Click Mode</>}
           </button>
@@ -107,9 +105,9 @@ export default function GlobeMap({ state, onWeatherAdded }: { state: any; onWeat
             width={undefined}
             height={undefined}
             backgroundColor="rgba(3,6,15,0)"
-            globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
-            atmosphereColor="#1e3a8a"
-            atmosphereAltitude={0.18}
+            globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+            atmosphereColor="#3b82f6"
+            atmosphereAltitude={0.15}
             pointsData={points}
             pointLat="lat"
             pointLng="lng"

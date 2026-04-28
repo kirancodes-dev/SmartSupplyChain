@@ -87,16 +87,16 @@ export default function KPIStats({ state }: { state: any }) {
 
           <div className="flex items-start justify-between relative z-10">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5 mb-1">
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{kpi.title}</p>
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{kpi.title}</p>
                 <InfoTooltip content={TOOLTIPS[kpi.title]?.content || ""} title={TOOLTIPS[kpi.title]?.title} />
               </div>
-              <h3 className="text-3xl font-black tracking-tight" style={{ color: kpi.iconColor }}>{kpi.value}</h3>
-              <p className="text-[11px] text-gray-600 mt-1 truncate">{kpi.sub}</p>
+              <h3 className="text-3xl font-black tracking-tight font-data" style={{ color: kpi.iconColor, textShadow: `0 2px 10px ${kpi.iconColor}40` }}>{kpi.value}</h3>
+              <p className="text-[11px] font-medium text-gray-500 mt-1 truncate">{kpi.sub}</p>
             </div>
-            <div className="p-3 rounded-xl ml-3 shrink-0 group-hover:scale-110 transition-transform duration-200"
-              style={{ background: kpi.iconColor + "20" }}>
-              <kpi.icon size={20} style={{ color: kpi.iconColor }} />
+            <div className="p-3 rounded-xl ml-3 shrink-0 group-hover:scale-110 transition-transform duration-300"
+              style={{ background: kpi.iconColor + "20", border: `1px solid ${kpi.iconColor}30`, boxShadow: `0 0 15px ${kpi.iconColor}20` }}>
+              <kpi.icon size={22} style={{ color: kpi.iconColor }} />
             </div>
           </div>
         </motion.div>

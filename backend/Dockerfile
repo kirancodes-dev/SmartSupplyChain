@@ -21,4 +21,4 @@ USER appuser
 EXPOSE 8080
 
 # Use multiple workers for production
-CMD uvicorn main:app --host 0.0.0.0 --port $PORT --workers 2
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT

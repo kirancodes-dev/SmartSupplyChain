@@ -47,40 +47,48 @@ export default function NavBar({ metrics, extraRight }: { metrics?: any; extraRi
           <span className="hidden sm:block text-sm font-black gradient-text tracking-tight">Smart Supply Chain AI</span>
         </div>
 
-        {/* Nav Tabs */}
-        <nav className="flex items-center gap-0.5 overflow-x-auto no-scrollbar">
-          {NAV_PRIMARY.map(({ href, label, icon: Icon }) => {
-            const active = path === href;
-            return (
-              <Link key={href} href={href}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                  active ? "bg-blue-500/20 text-blue-300 border border-blue-500/30" : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
-                }`}>
-                <Icon size={14} /><span className="hidden md:inline">{label}</span>
-              </Link>
-            );
-          })}
+        {/* Nav Tabs — primary links scroll, More button floats outside overflow */}
+        <nav className="flex items-center gap-0.5 min-w-0">
+          <div className="flex items-center gap-0.5 overflow-x-auto no-scrollbar">
+            {NAV_PRIMARY.map(({ href, label, icon: Icon }) => {
+              const active = path === href;
+              return (
+                <Link key={href} href={href}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                    active ? "bg-blue-500/20 text-blue-300 border border-blue-500/30" : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                  }`}>
+                  <Icon size={14} /><span className="hidden md:inline">{label}</span>
+                </Link>
+              );
+            })}
+          </div>
 
-          {/* More dropdown */}
-          <div className="relative">
+          {/* More dropdown — outside overflow container so it isn't clipped */}
+          <div className="relative shrink-0">
             <button onClick={() => setMoreOpen(o => !o)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                 NAV_MORE.some(n => n.href === path) ? "bg-blue-500/20 text-blue-300 border border-blue-500/30" : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
               }`}>
-              More <ChevronDown size={12} className={moreOpen ? "rotate-180 transition-transform" : "transition-transform"}/>
+              More <ChevronDown size={12} className={`transition-transform duration-200 ${moreOpen ? "rotate-180" : ""}`}/>
             </button>
             {moreOpen && (
-              <div className="absolute top-full left-0 mt-1 w-44 rounded-xl border border-white/10 overflow-hidden z-50 shadow-xl"
-                style={{ background: "rgba(6,8,24,0.98)", backdropFilter: "blur(20px)" }}>
-                {NAV_MORE.map(({ href, label, icon: Icon }) => (
-                  <Link key={href} href={href} onClick={() => setMoreOpen(false)}
-                    className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold transition-all ${
-                      path === href ? "bg-blue-500/20 text-blue-300" : "text-gray-400 hover:bg-white/5 hover:text-white"
-                    }`}>
-                    <Icon size={13}/> {label}
-                  </Link>
-                ))}
-              </div>
+              <>
+                {/* Backdrop to close on outside click */}
+                <div className="fixed inset-0 z-40" onClick={() => setMoreOpen(false)} />
+                <div className="absolute top-full left-0 mt-2 w-48 rounded-xl border border-white/12 overflow-hidden z-50 shadow-2xl"
+                  style={{ background: "rgba(6,8,24,0.98)", backdropFilter: "blur(24px)" }}>
+                  <div className="p-1">
+                    {NAV_MORE.map(({ href, label, icon: Icon }) => (
+                      <Link key={href} href={href} onClick={() => setMoreOpen(false)}
+                        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                          path === href ? "bg-blue-500/20 text-blue-300" : "text-gray-400 hover:bg-white/6 hover:text-white"
+                        }`}>
+                        <Icon size={13}/> {label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </nav>
@@ -93,7 +101,7 @@ export default function NavBar({ metrics, extraRight }: { metrics?: any; extraRi
             </div>
           )}
           <div className="badge badge-blue text-[10px]"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" /> Live</div>
-          <div className="badge badge-purple text-[10px]"><Sparkles size={9} /> Gemini 3</div>
+          <div className="badge badge-purple text-[10px]"><Sparkles size={9} /> Gemini 2.0</div>
           {metrics?.agent_auto_pilot && (
             <div className="badge badge-emerald text-[10px]"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Auto-Pilot ON</div>
           )}

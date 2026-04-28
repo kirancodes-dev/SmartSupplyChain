@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { apiFetch } from "@/lib/api";
+import ChatWidget from "@/components/ChatWidget";
 
 const QUICK_START = [
   {
@@ -134,7 +135,7 @@ export default function LandingPage() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-semibold mb-6">
-          <Star size={12} fill="currentColor" /> Google H2S Hackathon 2026 · Powered by Gemini 3 Flash
+          <Star size={12} fill="currentColor" /> Google H2S Hackathon 2026 · Powered by Gemini 2.0 Flash
         </motion.div>
 
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
@@ -146,7 +147,7 @@ export default function LandingPage() {
 
         <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
           className="text-gray-400 text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-          Industrial-grade AI command center. 15 live vessels. 12 global ports. Gemini 3 autonomously detects, analyzes, and resolves disruptions — <strong className="text-white">in real-time</strong>.
+          Industrial-grade AI command center. 15 live vessels. 12 global ports. Gemini 2.0 Flash autonomously detects, analyzes, and resolves disruptions — <strong className="text-white">in real-time</strong>.
         </motion.p>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
@@ -337,6 +338,8 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      <ChatWidget />
     </div>
   );
 }

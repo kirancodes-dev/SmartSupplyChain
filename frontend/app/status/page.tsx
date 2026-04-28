@@ -20,7 +20,7 @@ type Service = {
 const INIT: Service[] = [
   { name: "FastAPI Backend", icon: Globe2, description: "Core REST API server", endpoint: "/health", status: "checking" },
   { name: "WebSocket Feed", icon: Wifi, description: "Real-time ship telemetry", status: "checking" },
-  { name: "Gemini 3 Flash", icon: Bot, description: "AI inference engine", endpoint: "/chat", status: "checking" },
+  { name: "Gemini 2.0 Flash", icon: Bot, description: "AI inference engine", endpoint: "/chat", status: "checking" },
   { name: "SQLite Database", icon: Database, description: "Optimization log & history", endpoint: "/optimization-log", status: "checking" },
   { name: "Forecast Engine", icon: Zap, description: "24h predictive analytics", endpoint: "/forecast", status: "checking" },
   { name: "Weather Simulation", icon: Activity, description: "Storm injection system", endpoint: "/weather", status: "checking" },

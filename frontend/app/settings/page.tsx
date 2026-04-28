@@ -25,7 +25,7 @@ const DEFAULTS = {
   soundAlerts: false,
   emailAlerts: true,
   riskAlertLevel: "high",
-  agentModel: "gemini-3-flash",
+  agentModel: "gemini-2.0-flash",
   agentDebate: true,
   forecastHours: 24,
   co2Tracking: true,
@@ -193,10 +193,10 @@ export default function SettingsPage() {
                 <p className="text-xs font-black text-gray-600 uppercase tracking-widest pb-3">AI Engine</p>
                 <Select label="AI Model" value={s.agentModel}
                   options={[
-                    { value: "gemini-3-flash", label: "Gemini 3 Flash ⚡" },
+                    { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash ⚡" },
                     { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro 🧠" },
                     { value: "gemini-1.5-flash", label: "Gemini 1.5 Flash 🚀" },
-                    { value: "gemini-3-pro", label: "Gemini 3 Pro 💎" },
+                    { value: "gemini-2.0-flash", label: "Gemini 2.0 Pro 💎" },
                   ]}
                   onChange={v => set("agentModel", v)}
                   desc="The Gemini model used for all AI analysis and generation." />

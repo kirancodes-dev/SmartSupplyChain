@@ -9,7 +9,7 @@ const STEPS = [
     icon: Globe2,
     color: "#3b82f6",
     title: "Welcome to Smart Supply Chain AI",
-    desc: "This platform uses Gemini 3 Flash to autonomously monitor 15 vessels across global shipping lanes. Let's take a quick tour of the key features.",
+    desc: "This platform uses Gemini 2.0 Flash to autonomously monitor 15 vessels across global shipping lanes. Let's take a quick tour of the key features.",
     tip: "Press → or click Next to advance",
   },
   {
